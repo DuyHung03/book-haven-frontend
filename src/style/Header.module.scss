@@ -1,0 +1,28 @@
+.wrapper {
+    width: 100%;
+    padding: 0 86px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    z-index: 99999 !important;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo img {
+    vertical-align: middle;
+}
+
+.logo p {
+    margin: 0;
+    padding-left: 10px;
+}
