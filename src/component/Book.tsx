@@ -7,7 +7,7 @@ import { formatNumberWithDots } from '../util/formatPrice';
 
 const Book = ({ book }: { book: BookEntity }) => {
     return (
-        <Link to={`/book/${book.title}`}>
+        <Link to={`/book/${book.title}`} state={book}>
             <Card withBorder w={250} shadow='md' radius={'md'}>
                 <CardSection>
                     <LazyLoad>

@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Image, Text, TextInput } from '@mantine/core';
+import { Button, Center, Flex, Group, Image, Loader, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -93,9 +93,15 @@ const Login = () => {
                         </Group>
 
                         <Group justify='flex-end' mt='md' grow c='cyan'>
-                            <Button type='submit' size='' loading={loading}>
-                                Login
-                            </Button>
+                            {loading ? (
+                                <Center>
+                                    <Loader size={26} />
+                                </Center>
+                            ) : (
+                                <Button type='submit' size=''>
+                                    Login
+                                </Button>
+                            )}
                         </Group>
 
                         <Group justify='flex-start' mt='md'>

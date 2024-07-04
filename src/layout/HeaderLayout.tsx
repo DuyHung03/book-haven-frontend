@@ -3,10 +3,11 @@ import Footer from '../component/Footer';
 import Header from '../component/Header';
 
 const HeaderLayout = () => {
+    history.scrollRestoration = 'manual';
     return (
         <div>
             <Header />
-            <main style={{ paddingTop: '76px', paddingBottom: '30px' }}>
+            <main style={{ marginTop: '76px', paddingBottom: '30px' }}>
                 <Outlet />
             </main>
             <Footer />

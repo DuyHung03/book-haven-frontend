@@ -107,18 +107,20 @@ const Header = () => {
                         <Group grow>
                             <UnstyledButton>
                                 <Badge badgeContent={0} color='error'>
-                                    <FavoriteBorderOutlined fontSize='medium' color='error' />
+                                    <FavoriteBorderOutlined fontSize='large' color='error' />
                                 </Badge>
                             </UnstyledButton>
 
                             <UnstyledButton>
-                                <Badge badgeContent={4} color='error'>
-                                    <ShoppingCartOutlined fontSize='medium' color='primary' />
-                                </Badge>
+                                <Link to={`/cart/${user.userId}`}>
+                                    <Badge badgeContent={4} color='error'>
+                                        <ShoppingCartOutlined fontSize='large' color='primary' />
+                                    </Badge>
+                                </Link>
                             </UnstyledButton>
 
                             <Link to='/profile'>
-                                <Avatar src={user.photoUrl} alt='avatar' size={'md'} />
+                                <Avatar src={user.photoUrl} alt='avatar' size={'lg'} />
                             </Link>
                         </Group>
                     )}

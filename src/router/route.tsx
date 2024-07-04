@@ -1,6 +1,7 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, ScrollRestoration, createBrowserRouter } from 'react-router-dom';
 import HeaderLayout from '../layout/HeaderLayout';
 import BookDetails from '../pages/BookDetails';
+import Cart from '../pages/Cart';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
@@ -10,7 +11,12 @@ import SignUp from '../pages/SignUp';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <HeaderLayout />,
+        element: (
+            <>
+                <ScrollRestoration />
+                <HeaderLayout />
+            </>
+        ),
         children: [
             {
                 path: '',
@@ -27,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: '/book/:bookTitle',
                 element: <BookDetails />,
+            },
+            {
+                path: '/cart/:userId',
+                element: <Cart />,
             },
         ],
     },

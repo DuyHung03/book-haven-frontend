@@ -1,8 +1,9 @@
-import { BackgroundImage, Box, Flex, Group, Text } from '@mantine/core';
+import { Flex, Group, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Book from '../component/Book';
 import GenreBar from '../component/GenreBar';
+import SubBanner from '../component/SubBanner';
 import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
 
@@ -30,24 +31,7 @@ const Search = () => {
     return (
         <Group>
             <GenreBar />
-            <Box w={'100%'}>
-                <BackgroundImage src='https://bizweb.dktcdn.net/100/364/248/themes/736344/assets/bg_breadcrumb.jpg?1719328879911'>
-                    <Flex direction={'column'} p={90} justify={'center'} align={'center'}>
-                        <Text c='white' size='36px' fw={500} mb={12}>
-                            Looking for: {query}
-                        </Text>
-                        <Group>
-                            <Link to={'/'}>
-                                <Text c={'white'} td={'underline'}>
-                                    Home
-                                </Text>
-                            </Link>
-                            <Text c={'white'}>{'>'}</Text>
-                            <Text c={'white'}>Search</Text>
-                        </Group>
-                    </Flex>
-                </BackgroundImage>
-            </Box>
+            <SubBanner title={`Looking for: ${query}`} direction='Search' />
 
             <Flex direction={'column'} pl={176} pr={176} mt={16} w={'100%'}>
                 <Text fw={500} size='28px' mb={12}>
