@@ -247,9 +247,15 @@ const Cart = () => {
                             )}₫`}</Text>
                         </Group>
                         <Group justify='flex-end' mt={'md'}>
-                            <Button disabled={selectedItems.length == 0} color={'red'} size='lg'>
-                                Make Payment
-                            </Button>
+                            <Link to={`/checkout/${user.userId}`}>
+                                <Button
+                                    disabled={selectedItems.length == 0}
+                                    color={'red'}
+                                    size='lg'
+                                >
+                                    Make Payment
+                                </Button>
+                            </Link>
                         </Group>
                     </Box>
                 </Group>

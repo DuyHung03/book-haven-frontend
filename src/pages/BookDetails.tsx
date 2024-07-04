@@ -156,7 +156,7 @@ const BookDetails = () => {
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
-                                disabled={book.quantityInStock == 0 || value == 1}
+                                disabled={book.inStock == 0 || value == 1}
                                 onClick={() => {
                                     setValue(value - 1);
                                 }}
@@ -168,9 +168,7 @@ const BookDetails = () => {
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
-                                disabled={
-                                    book.quantityInStock == 0 || value >= book.quantityInStock
-                                }
+                                disabled={book.inStock == 0 || value >= book.inStock}
                                 onClick={() => {
                                     setValue(value + 1);
                                 }}
@@ -178,13 +176,13 @@ const BookDetails = () => {
                                 {<Add />}
                             </Button>
                         </Group>
-                        {book.quantityInStock != 0 ? (
+                        {book.inStock != 0 ? (
                             <Text
                                 td={'underline'}
                                 fs={'italic'}
                                 mt={'sm'}
                                 c={'gray'}
-                            >{`In stock: ${book.quantityInStock}`}</Text>
+                            >{`In stock: ${book.inStock}`}</Text>
                         ) : (
                             <Text fs={'italic'} mt={'sm'} c={'red'}>
                                 Out of stock!

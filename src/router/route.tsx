@@ -2,6 +2,7 @@ import { RouterProvider, ScrollRestoration, createBrowserRouter } from 'react-ro
 import HeaderLayout from '../layout/HeaderLayout';
 import BookDetails from '../pages/BookDetails';
 import Cart from '../pages/Cart';
+import Checkout from '../pages/Checkout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
             {
                 path: '/cart/:userId',
                 element: <Cart />,
+            },
+            {
+                path: '/checkout/:userId',
+                element: <Checkout />,
             },
         ],
     },

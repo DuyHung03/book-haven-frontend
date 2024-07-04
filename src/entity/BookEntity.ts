@@ -10,5 +10,5 @@ export interface BookEntity {
     description?: string;
     rating?: number;
     genreNameList?: Array<string>;
-    quantityInStock: number;
+    inStock: number;
 }

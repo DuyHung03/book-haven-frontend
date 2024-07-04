@@ -1,4 +1,5 @@
-import { Flex, Group, Text } from '@mantine/core';
+import { Button, Flex, Group, Text } from '@mantine/core';
+import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Book from '../component/Book';
@@ -11,14 +12,19 @@ const Search = () => {
     const [searchParams] = useSearchParams();
     const [books, setBooks] = useState<BookEntity[]>([]);
     const query = searchParams.get('query');
+    const [pageNo, setPageNo] = useState(1);
 
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         const searchBooks = async (query: string) => {
             const res = await axiosInstance.get('/book/search', {
                 params: {
                     bookName: query,
+                    pageNo: pageNo,
+                    pageSize: 12,
                 },
             });
+
             console.log(res);
 
             if (res.data.code === 200) {
@@ -26,7 +32,15 @@ const Search = () => {
             }
         };
         if (query != null) searchBooks(query);
-    }, [query]);
+    }, [query, pageNo]);
+
+    const handlePrevPage = () => {
+        if (pageNo > 1) setPageNo(pageNo - 1);
+    };
+
+    const handleNextPage = () => {
+        if (books.length == 12) setPageNo(pageNo + 1);
+    };
 
     return (
         <Group>
@@ -40,7 +54,6 @@ const Search = () => {
 
                 <Text>There are {books.length} matching search results</Text>
             </Flex>
-
             <Flex
                 direction={'row'}
                 gap={'lg'}
@@ -54,6 +67,26 @@ const Search = () => {
                     <Book book={book} key={book.bookId} />
                 ))}
             </Flex>
+            <Group justify='center' align='center' w={'100%'} mt={'lg'}>
+                <Button
+                    onClick={handlePrevPage}
+                    disabled={pageNo == 1}
+                    variant='light'
+                    size='lg'
+                    leftSection={<ArrowLeft />}
+                >
+                    Previous
+                </Button>
+                <Button
+                    onClick={handleNextPage}
+                    disabled={books.length < 12}
+                    variant='light'
+                    size='lg'
+                    rightSection={<ArrowRight />}
+                >
+                    Next
+                </Button>
+            </Group>
         </Group>
     );
 };
