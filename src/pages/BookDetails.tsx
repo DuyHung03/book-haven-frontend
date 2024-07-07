@@ -23,7 +23,6 @@ import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 const BookDetails = () => {
     const location = useLocation();
-    console.log(location);
     const navigate = useNavigate();
     const { user, token } = useUserStore();
 
@@ -130,10 +129,7 @@ const BookDetails = () => {
                             </Center>
                         </Card>
 
-                        <Text mt={'md'}>
-                            <b>Description: </b>
-                            {book.description}
-                        </Text>
+                        <Text mt={'md'}></Text>
                         <Text mt={'md'}>
                             <b>Publication Year: </b>
                             {book.publicationYear}
@@ -156,7 +152,7 @@ const BookDetails = () => {
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
-                                disabled={book.inStock == 0 || value == 1}
+                                disabled={book.quantityInStock == 0 || value == 1}
                                 onClick={() => {
                                     setValue(value - 1);
                                 }}
@@ -168,7 +164,9 @@ const BookDetails = () => {
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
-                                disabled={book.inStock == 0 || value >= book.inStock}
+                                disabled={
+                                    book.quantityInStock == 0 || value >= book.quantityInStock
+                                }
                                 onClick={() => {
                                     setValue(value + 1);
                                 }}
@@ -176,13 +174,13 @@ const BookDetails = () => {
                                 {<Add />}
                             </Button>
                         </Group>
-                        {book.inStock != 0 ? (
+                        {book.quantityInStock != 0 ? (
                             <Text
                                 td={'underline'}
                                 fs={'italic'}
                                 mt={'sm'}
                                 c={'gray'}
-                            >{`In stock: ${book.inStock}`}</Text>
+                            >{`In stock: ${book.quantityInStock}`}</Text>
                         ) : (
                             <Text fs={'italic'} mt={'sm'} c={'red'}>
                                 Out of stock!

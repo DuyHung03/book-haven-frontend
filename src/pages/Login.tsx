@@ -1,6 +1,7 @@
 import { Button, Center, Flex, Group, Image, Loader, Text, TextInput } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { hasLength, isEmail, useForm } from '@mantine/form';
+import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
@@ -8,16 +9,15 @@ import axiosInstance from '../network/httpRequest';
 import useUserStore from '../store/useUserStore';
 
 const Login = () => {
-    const { setUser, setToken } = useUserStore();
+    const { setUser, setToken, user, token } = useUserStore();
     const navigate = useNavigate();
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: { email: '', password: '' },
 
         validate: {
-            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-            password: (value) =>
-                value.length < 8 ? 'Password must have at least 8 letters' : null,
+            email: isEmail('Invalid email'),
+            password: hasLength({ min: 8, max: 20 }, 'Password must have at least 8 letters'),
         },
     });
 
@@ -49,10 +49,25 @@ const Login = () => {
             }
         } catch (error) {
             console.error('Login failed:', error);
+            form.setFieldError('email', 'Wrong email or password');
+            form.setFieldError('password', 'Wrong email or password');
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        const tokenDecoded = jwtDecode(token);
+        const exp = tokenDecoded?.exp;
+
+        if (exp && user.userId != null && exp * 1000 > new Date().getTime()) {
+            navigate('/');
+        }
+    }, []);
 
     return (
         <Group p={24} display={'flex'} align='center' justify='center'>
@@ -78,6 +93,8 @@ const Login = () => {
                             type='password'
                             size='md'
                             mt='sm'
+                            max={20}
+                            min={8}
                             label='Password'
                             placeholder='Password'
                             key={form.key('password')}
