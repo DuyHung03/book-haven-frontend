@@ -29,17 +29,22 @@ import { AddressEntity } from '../entity/AddressEntity';
 import { CartItemEntity } from '../entity/CartItemEntity';
 import axiosInstance from '../network/httpRequest';
 import shippingService from '../network/shippingServiceApi';
+import useCurrentOrderStore from '../store/useCurrentOrder';
 import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 
 const Checkout = () => {
     const { user, token } = useUserStore();
+    const { setCurrentOrderItems, setTotalAmount, clearCurrentOrder } = useCurrentOrderStore();
     // const navigate = useNavigate();
     const [address, setAddress] = useState<AddressEntity | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     const [shippingFee, setShippingFee] = useState<number>(0);
     const location = useLocation();
+
     const orderItems: CartItemEntity[] = location.state;
+
+    console.log(orderItems);
 
     const getAddress = async () => {
         try {
@@ -53,7 +58,6 @@ const Checkout = () => {
             });
             calculateShippingFee(res.data.result);
             setAddress(res.data.result);
-            console.log(address);
         } catch (error) {
             console.error(error);
         }
@@ -106,8 +110,6 @@ const Checkout = () => {
         },
     ];
 
-    console.log(paymentMethod);
-
     const payments = paymentMethods.map((item) => (
         <RadioCard radius='md' value={item.name} key={item.name}>
             <Group wrap='nowrap' align='center' p={12} justify='flex-start'>
@@ -125,18 +127,27 @@ const Checkout = () => {
     const bookPrice = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const total: number = bookPrice + shippingFee;
 
+    const callPaymentApi = async () => {
+        const res = await axiosInstance.get('/payment/vn-pay', {
+            params: {
+                amount: total,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res;
+    };
+
     const handleCheckout = async () => {
         if (address?.addressId && paymentMethod) {
             if (paymentMethod == 'Pay via VNPAY') {
-                const res = await axiosInstance.get('/payment/vn-pay', {
-                    params: {
-                        amount: total,
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                console.log(res);
+                const res = await callPaymentApi();
+                clearCurrentOrder();
+                setCurrentOrderItems(orderItems);
+                setTotalAmount(total);
+                console.log(total);
+
                 if (res.data.code === 200) {
                     window.location.href = res.data.result.paymentUrl;
                 }
