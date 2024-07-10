@@ -16,15 +16,16 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Slide } from 'react-slideshow-image';
 import { ToastContainer, toast } from 'react-toastify';
-import GenreBar from '../component/GenreBar';
 import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
+import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 const BookDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, token } = useUserStore();
+    const { setCartItem } = useCartStore();
 
     const book: BookEntity = location.state;
     const theme = useMantineTheme();
@@ -52,7 +53,7 @@ const BookDetails = () => {
                 });
 
                 if (res.data.code === 200) {
-                    toast.success(res.data.result, {
+                    toast.success('Add to cart successfully', {
                         position: 'top-right',
                         autoClose: 1000,
                         hideProgressBar: false,
@@ -62,6 +63,9 @@ const BookDetails = () => {
                         progress: undefined,
                         theme: 'light',
                     });
+                    console.log(res.data.result);
+
+                    setCartItem(res.data.result.cartItems);
                 }
             } catch (error) {
                 console.error(error);
@@ -82,11 +86,9 @@ const BookDetails = () => {
 
     return (
         <Group>
-            <GenreBar />
-
             <ToastContainer
                 toastStyle={{
-                    marginTop: '80px',
+                    marginTop: '140px',
                 }}
                 limit={1}
             />

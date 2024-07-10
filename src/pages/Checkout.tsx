@@ -15,14 +15,14 @@ import {
 import {
     AddHomeWork,
     CollectionsBookmark,
-    Edit,
     LocalAtm,
     LocationOn,
     Payments,
 } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import CheckoutAddress from '../component/CheckoutAddress';
 import CheckoutHeader from '../component/CheckoutHeader';
 import OrderItem from '../component/OrderItem';
 import { AddressEntity } from '../entity/AddressEntity';
@@ -36,7 +36,7 @@ import { formatNumberWithDots } from '../util/formatPrice';
 const Checkout = () => {
     const { user, token } = useUserStore();
     const { setCurrentOrderItems, setTotalAmount, clearCurrentOrder } = useCurrentOrderStore();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [address, setAddress] = useState<AddressEntity | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     const [shippingFee, setShippingFee] = useState<number>(0);
@@ -46,7 +46,7 @@ const Checkout = () => {
 
     console.log(orderItems);
 
-    const getAddress = async () => {
+    const getAddress = useCallback(async () => {
         try {
             const res = await axiosInstance.get('/address/get', {
                 params: {
@@ -58,10 +58,12 @@ const Checkout = () => {
             });
             calculateShippingFee(res.data.result);
             setAddress(res.data.result);
+            console.log('address');
         } catch (error) {
             console.error(error);
         }
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [address]);
 
     const calculateShippingFee = async (address: AddressEntity) => {
         try {
@@ -141,10 +143,10 @@ const Checkout = () => {
 
     const handleCheckout = async () => {
         if (address?.addressId && paymentMethod) {
+            clearCurrentOrder();
+            setCurrentOrderItems(orderItems);
             if (paymentMethod == 'Pay via VNPAY') {
                 const res = await callPaymentApi();
-                clearCurrentOrder();
-                setCurrentOrderItems(orderItems);
                 setTotalAmount(total);
                 console.log(total);
 
@@ -152,7 +154,7 @@ const Checkout = () => {
                     window.location.href = res.data.result.paymentUrl;
                 }
             } else {
-                console.log('order COD success');
+                navigate('/payment_return', { state: { paymentMethod } });
             }
         } else if (!address?.addressId) {
             toast.error('Missing delivery address', {
@@ -184,29 +186,7 @@ const Checkout = () => {
                             </Text>
                         </Group>
                         {address?.addressId ? (
-                            <div>
-                                <Text ml={12} mb={4}>
-                                    <b>Name: </b>
-                                    {address?.fullName}
-                                </Text>
-                                <Text ml={12} mb={4}>
-                                    <b>Phone: </b>
-                                    {address?.phone}
-                                </Text>
-                                <Text ml={12} mb={4}>
-                                    <b>Address: </b>
-                                    {`${address?.houseNumber}, ${address?.wardName}, ${address?.districtName}, ${address?.provinceName}`}
-                                </Text>
-                                <Link to={`/checkout/${user.userId}/address`} state={address}>
-                                    <Button
-                                        leftSection={<Edit fontSize='small' />}
-                                        variant='transparent'
-                                        mt={8}
-                                    >
-                                        Edit address
-                                    </Button>
-                                </Link>
-                            </div>
+                            <CheckoutAddress address={address} />
                         ) : (
                             <div>
                                 <Text c={'gray'} fs={'italic'}>

@@ -1,46 +1,32 @@
-import {
-    Box,
-    Button,
-    Center,
-    Checkbox,
-    CloseButton,
-    Flex,
-    Group,
-    Image,
-    Table,
-    Text,
-} from '@mantine/core';
+import { Box, Button, Center, Flex, Group, Image, Table, Text } from '@mantine/core';
 import { ShoppingCartCheckout } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import CartItem from '../component/CartItem';
 import SubBanner from '../component/SubBanner';
 import { CartItemEntity } from '../entity/CartItemEntity';
 import axiosInstance from '../network/httpRequest';
+import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 
 const Cart = () => {
     const { user, token } = useUserStore();
+    const { setCartItem } = useCartStore();
 
     const [cartItems, setCartItems] = useState<CartItemEntity[]>([]);
-
     const [selectedItems, setSelectedItems] = useState<CartItemEntity[]>([]);
-
     const [loading, setLoading] = useState(false);
 
     const getItemsInCart = async () => {
         try {
             const res = await axiosInstance.get('cart/get', {
-                params: {
-                    userId: user.userId,
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                params: { userId: user.userId },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setCartItems(res.data.result.cartItems);
+            setCartItem(res.data.result.cartItems);
         } catch (error) {
             console.log(error);
         }
@@ -51,47 +37,39 @@ const Cart = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSelectProduct = (cartItem: CartItemEntity, checked: boolean) => {
+    const handleSelectProduct = useCallback((cartItem: CartItemEntity, checked: boolean) => {
         if (checked) {
             setSelectedItems((prev) => [...prev, cartItem]);
         } else {
             setSelectedItems((prev) => prev.filter((item) => item.bookId !== cartItem.bookId));
         }
-    };
+    }, []);
 
     const handleDeleteItem = async (bookId: string) => {
         try {
-            await axiosInstance.delete('cart/delete', {
-                params: {
-                    bookId: bookId,
-                    userId: user.userId,
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            const res = await axiosInstance.delete('cart/delete', {
+                params: { bookId, userId: user.userId },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setCartItems((prev) => prev.filter((item) => item.bookId !== bookId));
+            setSelectedItems([]);
+            setCartItem(res.data.result.cartItems);
             toast.success('Delete successfully!');
         } catch (error) {
             console.log(error);
         }
     };
 
-    const handleIncrease = async (cart: CartItemEntity) => {
-        if (cart.quantity < cart.inStock) {
+    const handleIncrease = async (cartItem: CartItemEntity) => {
+        if (cartItem.quantity < cartItem.inStock) {
             setLoading(true);
             try {
                 const res = await axiosInstance.put('cart/increaseQuantity', null, {
-                    params: {
-                        bookId: cart.bookId,
-                        userId: user.userId,
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    params: { bookId: cartItem.bookId, userId: user.userId },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
                 setCartItems(res.data.result.cartItems);
-                console.log(res);
+                setSelectedItems([]);
             } catch (error) {
                 console.log(error);
             } finally {
@@ -100,19 +78,15 @@ const Cart = () => {
         }
     };
 
-    const handleDecrease = async (cart: CartItemEntity) => {
-        if (cart.quantity > 1) {
+    const handleDecrease = async (cartItem: CartItemEntity) => {
+        if (cartItem.quantity > 1) {
             setLoading(true);
             try {
                 const res = await axiosInstance.put('cart/decreaseQuantity', null, {
-                    params: {
-                        bookId: cart.bookId,
-                        userId: user.userId,
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    params: { bookId: cartItem.bookId, userId: user.userId },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
+                setSelectedItems([]);
                 setCartItems(res.data.result.cartItems);
             } catch (error) {
                 console.log(error);
@@ -123,75 +97,27 @@ const Cart = () => {
     };
 
     const rows = cartItems?.map((item, index) => (
-        <Table.Tr key={index} style={{ cursor: 'pointer' }}>
-            <Table.Td style={{ color: 'black' }}>
-                <CartItem cartItem={item} />
-            </Table.Td>
-            <Table.Td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                <Text>{`${formatNumberWithDots(item.price.toString())}₫`}</Text>
-            </Table.Td>
-            <Table.Td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                <Center style={{ height: '100%' }}>
-                    <Button
-                        mr={'md'}
-                        variant='light'
-                        disabled={item.quantity == 1 || loading || item.inStock == 0}
-                        onClick={() => handleDecrease(item)}
-                    >
-                        -
-                    </Button>
-                    <Text>{item?.quantity}</Text>
-                    <Button
-                        ml={'md'}
-                        variant='light'
-                        disabled={item.quantity == item.inStock || loading || item.inStock == 0}
-                        onClick={() => handleIncrease(item)}
-                    >
-                        +
-                    </Button>
-                </Center>
-            </Table.Td>
-            <Table.Td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                <Center style={{ height: '100%' }}>
-                    <Text>{`${formatNumberWithDots(
-                        (item?.quantity * item?.price).toString()
-                    )}₫`}</Text>
-                </Center>
-            </Table.Td>
-            <Table.Td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                <Center style={{ height: '100%' }}>
-                    <Checkbox
-                        style={{ cursor: 'pointer' }}
-                        color={'cyan'}
-                        checked={selectedItems.includes(item)}
-                        onChange={(e) => handleSelectProduct(item, e.target.checked)}
-                    />
-                </Center>
-            </Table.Td>
-            <Table.Td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                <Center style={{ height: '100%' }}>
-                    <CloseButton onClick={() => handleDeleteItem(item.bookId)} />
-                </Center>
-            </Table.Td>
-        </Table.Tr>
+        <CartItem
+            key={index}
+            cartItem={item}
+            onDecrease={handleDecrease}
+            onIncrease={handleIncrease}
+            onDelete={handleDeleteItem}
+            onSelect={handleSelectProduct}
+            isChecked={selectedItems.includes(item)}
+            loading={loading}
+        />
     ));
 
     const totalPrice = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
     return (
         <Group>
-            <ToastContainer
-                toastStyle={{
-                    marginTop: '80px',
-                }}
-                limit={1}
-            />
+            <ToastContainer toastStyle={{ marginTop: '80px' }} limit={1} />
             <SubBanner title={'Your cart'} direction='Search' />
             <Flex direction={'column'} pl={176} pr={176} mt={16} w={'100%'}>
                 <Text fw={500} size='28px' mb={12}>
                     Your cart
                 </Text>
-
                 <Text>There are {cartItems?.length} products in your cart</Text>
             </Flex>
             {cartItems.length != 0 ? (
@@ -232,7 +158,6 @@ const Cart = () => {
                             </Table.Thead>
                             <Table.Tbody>{rows}</Table.Tbody>
                         </Table>
-
                         <hr />
                         <Group justify='flex-end'>
                             <Text
@@ -270,7 +195,6 @@ const Cart = () => {
                     <Text fs={'italic'} c={'gray'}>
                         Your cart is empty now!
                     </Text>
-
                     <Link to={'/'}>
                         <Button
                             rightSection={<ShoppingCartCheckout fontSize='small' />}
@@ -278,7 +202,7 @@ const Cart = () => {
                             variant='subtle'
                             color='cyan'
                         >
-                            Countinue shopping
+                            Continue shopping
                         </Button>
                     </Link>
                 </Flex>

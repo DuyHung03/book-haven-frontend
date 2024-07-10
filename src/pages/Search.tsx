@@ -3,7 +3,6 @@ import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Book from '../component/Book';
-import GenreBar from '../component/GenreBar';
 import SubBanner from '../component/SubBanner';
 import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
@@ -12,6 +11,7 @@ const Search = () => {
     const [searchParams] = useSearchParams();
     const [books, setBooks] = useState<BookEntity[]>([]);
     const query = searchParams.get('query');
+    const genre = searchParams.get('genre');
     const [pageNo, setPageNo] = useState(1);
 
     useEffect(() => {
@@ -31,8 +31,30 @@ const Search = () => {
                 setBooks(res.data.result);
             }
         };
-        if (query != null) searchBooks(query);
+        if (query != null) {
+            searchBooks(query);
+        }
     }, [query, pageNo]);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const searchBooks = async (genre: string) => {
+            const res = await axiosInstance.get('/book/getByGenre', {
+                params: {
+                    genreName: genre,
+                    pageNo: pageNo,
+                    pageSize: 12,
+                },
+            });
+
+            console.log(res);
+
+            if (res.data.code === 200) {
+                setBooks(res.data.result);
+            }
+        };
+        if (genre != null) searchBooks(genre);
+    }, [genre, pageNo]);
 
     const handlePrevPage = () => {
         if (pageNo > 1) setPageNo(pageNo - 1);
@@ -44,15 +66,16 @@ const Search = () => {
 
     return (
         <Group>
-            <GenreBar />
-            <SubBanner title={`Looking for: ${query}`} direction='Search' />
+            <SubBanner title={`Looking for: ${query ? query : genre}`} direction='Search' />
 
             <Flex direction={'column'} pl={176} pr={176} mt={16} w={'100%'}>
                 <Text fw={500} size='28px' mb={12}>
                     Search page
                 </Text>
 
-                <Text>There are {books.length} matching search results</Text>
+                <Text>
+                    There are {books.length} matching search results on <b>Page: {pageNo}</b>
+                </Text>
             </Flex>
             <Flex
                 direction={'row'}

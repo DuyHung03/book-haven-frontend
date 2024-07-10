@@ -15,11 +15,14 @@ import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo_only.png';
+import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
 import styles from '../style/Header.module.scss';
+import GenreBar from './GenreBar';
 
 const Header = () => {
     const { user, token } = useUserStore();
+    const { cartItems } = useCartStore();
     const [searchValue, setSearchValue] = useState('');
     const navigate = useNavigate();
 
@@ -113,7 +116,7 @@ const Header = () => {
 
                             <UnstyledButton>
                                 <Link to={`/cart/${user.userId}`}>
-                                    <Badge badgeContent={4} color='error'>
+                                    <Badge badgeContent={cartItems.length} color='error'>
                                         <ShoppingCartOutlined fontSize='large' color='primary' />
                                     </Badge>
                                 </Link>
@@ -126,6 +129,7 @@ const Header = () => {
                     )}
                 </Group>
             </Group>
+            <GenreBar />
         </header>
     );
 };

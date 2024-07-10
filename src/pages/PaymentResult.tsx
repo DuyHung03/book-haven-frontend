@@ -1,7 +1,7 @@
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Group } from '@mantine/core';
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import axiosInstance from '../network/httpRequest';
 import useCurrentOrderStore from '../store/useCurrentOrder';
 import useUserStore from '../store/useUserStore';
@@ -9,6 +9,9 @@ import useUserStore from '../store/useUserStore';
 const PaymentResult = () => {
     const { token, user } = useUserStore();
     const { orderItems, totalAmount, isSaved, setIsSaved } = useCurrentOrderStore();
+    const location = useLocation();
+    const { paymentMethod } = location.state || {};
+    const [checkoutStatus, setCheckoutStatus] = useState(false);
     const [searchParams] = useSearchParams();
     const vnp_ResponseCode = searchParams.get('vnp_ResponseCode');
     const vnp_Amount = searchParams.get('vnp_Amount');
@@ -36,7 +39,7 @@ const PaymentResult = () => {
     };
 
     const saveOrder = async () => {
-        const res = await axiosInstance.post(
+        await axiosInstance.post(
             '/order/save',
             { totalAmount: totalAmount.toString(), orderItems: orderItems },
             {
@@ -48,23 +51,34 @@ const PaymentResult = () => {
                 },
             }
         );
-        console.log(res);
     };
 
     useEffect(() => {
         if (vnp_ResponseCode == '00') {
-            savePayment();
+            setCheckoutStatus(true);
             if (!isSaved) {
+                savePayment();
                 saveOrder();
                 setIsSaved(true);
             }
+            console.log('vnp');
         }
+
+        if (paymentMethod == 'COD (Cash on Delivery)') {
+            saveOrder();
+            setCheckoutStatus(true);
+            setIsSaved(true);
+            console.log('cod');
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    console.log(checkoutStatus);
+
     return (
         <Group w={150} h={150} justify='center' align='center'>
-            {vnp_ResponseCode == '00' ? (
+            {!checkoutStatus ? (
                 <DotLottieReact
                     src='https://lottie.host/3feb6297-7841-41d2-b588-d8bcb77f4514/wuIxQfHXDd.lottie'
                     autoplay

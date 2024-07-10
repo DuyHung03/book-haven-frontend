@@ -7,7 +7,7 @@ const HeaderLayout = () => {
     return (
         <div>
             <Header />
-            <main style={{ marginTop: '76px', paddingBottom: '30px' }}>
+            <main style={{ marginTop: '136px', paddingBottom: '30px' }}>
                 <Outlet />
             </main>
             <Footer />
