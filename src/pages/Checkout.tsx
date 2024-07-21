@@ -34,7 +34,7 @@ import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 
 const Checkout = () => {
-    const { user, token } = useUserStore();
+    const { user, token, setUserAddress } = useUserStore();
     const { setCurrentOrderItems, setTotalAmount, clearCurrentOrder } = useCurrentOrderStore();
     const navigate = useNavigate();
     const [address, setAddress] = useState<AddressEntity | null>(null);
@@ -58,6 +58,7 @@ const Checkout = () => {
             });
             calculateShippingFee(res.data.result);
             setAddress(res.data.result);
+            setUserAddress(res.data.result);
             console.log('address');
         } catch (error) {
             console.error(error);
@@ -145,11 +146,9 @@ const Checkout = () => {
         if (address?.addressId && paymentMethod) {
             clearCurrentOrder();
             setCurrentOrderItems(orderItems);
+            setTotalAmount(total);
             if (paymentMethod == 'Pay via VNPAY') {
                 const res = await callPaymentApi();
-                setTotalAmount(total);
-                console.log(total);
-
                 if (res.data.code === 200) {
                     window.location.href = res.data.result.paymentUrl;
                 }

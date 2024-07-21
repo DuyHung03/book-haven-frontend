@@ -1,8 +1,9 @@
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Group } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import axiosInstance from '../network/httpRequest';
+import shippingService from '../network/shippingServiceApi';
 import useCurrentOrderStore from '../store/useCurrentOrder';
 import useUserStore from '../store/useUserStore';
 
@@ -20,6 +21,15 @@ const PaymentResult = () => {
     const vnp_TransactionNo = searchParams.get('vnp_TransactionNo');
     const vnp_TxnRef = searchParams.get('vnp_TxnRef');
     const vnp_PayDate = searchParams.get('vnp_PayDate');
+    const paymentTypeId = useMemo(
+        () => (paymentMethod === 'COD (Cash on Delivery)' ? 2 : 1),
+        [paymentMethod]
+    );
+    const codAmount = useMemo(
+        () => (paymentMethod === 'COD (Cash on Delivery)' ? totalAmount : 0),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [paymentMethod]
+    );
 
     const savePayment = async () => {
         await axiosInstance.get('/payment/vn-pay-callback', {
@@ -39,7 +49,7 @@ const PaymentResult = () => {
     };
 
     const saveOrder = async () => {
-        await axiosInstance.post(
+        const res = await axiosInstance.post(
             '/order/save',
             { totalAmount: totalAmount.toString(), orderItems: orderItems },
             {
@@ -51,24 +61,68 @@ const PaymentResult = () => {
                 },
             }
         );
+        if (res.data.code == 200) setCheckoutStatus(true);
+        console.log(totalAmount);
+    };
+
+    const data = {
+        to_name: user.email,
+        from_name: 'Book Haven Store',
+        from_phone: '0904123456',
+        from_address: 'Phường Hòa Khánh Bắc, Quận Liên Chiểu, Da Nang, Vietnam',
+        from_ward_name: 'Phường Hòa Khánh Bắc',
+        from_district_name: 'Quận Liên Chiểu',
+        from_province_name: 'Đà Nẵng',
+        to_phone: user.address?.phone,
+        to_address: `${user.address?.houseNumber}, ${user.address?.wardName}, ${user.address?.districtName}, ${user.address?.provinceName}`,
+        to_ward_code: user.address?.wardCode.toString(),
+        to_district_id: user.address?.districtId,
+        weight: 20,
+        height: 20,
+        length: 20,
+        width: 20,
+        service_type_id: 5,
+        service_id: 53321,
+        payment_type_id: paymentTypeId,
+        required_note: 'KHONGCHOXEMHANG',
+        note: 'Call before delivery please',
+        cod_amount: codAmount,
+        items: orderItems.map((order) => ({
+            name: order.title,
+            quantity: order.quantity,
+            weight: 1,
+        })),
+    };
+
+    const createOrderOnShippingService = async () => {
+        const res = await shippingService.post('v2/shipping-order/create', data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (res.data.code == 200) {
+            saveOrder();
+        }
+        console.log(res);
     };
 
     useEffect(() => {
         if (vnp_ResponseCode == '00') {
-            setCheckoutStatus(true);
             if (!isSaved) {
-                savePayment();
-                saveOrder();
-                setIsSaved(true);
+                savePayment(); //save online payment
+                createOrderOnShippingService(); //create order on ghn
+                setIsSaved(true); //set is save to avoid re-save
             }
             console.log('vnp');
         }
 
         if (paymentMethod == 'COD (Cash on Delivery)') {
-            saveOrder();
-            setCheckoutStatus(true);
-            setIsSaved(true);
-            console.log('cod');
+            if (!isSaved) {
+                // saveOrder();
+                setIsSaved(true);
+                createOrderOnShippingService();
+                console.log('cod');
+            }
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

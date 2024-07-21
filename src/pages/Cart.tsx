@@ -111,8 +111,8 @@ const Cart = () => {
 
     const totalPrice = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     return (
-        <Group>
-            <ToastContainer toastStyle={{ marginTop: '80px' }} limit={1} />
+        <div>
+            <ToastContainer toastStyle={{ marginTop: '140px' }} limit={1} />
             <SubBanner title={'Your cart'} direction='Search' />
             <Flex direction={'column'} pl={176} pr={176} mt={16} w={'100%'}>
                 <Text fw={500} size='28px' mb={12}>
@@ -207,7 +207,7 @@ const Cart = () => {
                     </Link>
                 </Flex>
             )}
-        </Group>
+        </div>
     );
 };
 

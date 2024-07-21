@@ -161,7 +161,7 @@ const BookDetails = () => {
                             >
                                 {<Remove />}
                             </Button>
-                            <Text>{value}</Text>
+                            <Text>{book.quantityInStock > 0 ? value : 0}</Text>
                             <Button
                                 variant='outline'
                                 color={'gray'}
@@ -190,11 +190,12 @@ const BookDetails = () => {
                         )}
 
                         <Button
-                            bg={'cyan'}
+                            color={'cyan'}
                             size='lg'
                             mt={'md'}
                             leftSection={<AddShoppingCart />}
                             loading={loading}
+                            disabled={book.quantityInStock <= 0}
                             onClick={handleAddtocart}
                         >
                             Add to cart

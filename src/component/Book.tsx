@@ -15,7 +15,7 @@ const Book = ({ book }: { book: BookEntity }) => {
                             src={book.imgUrls}
                             h={250}
                             fallbackSrc={
-                                'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png'
+                                'https://images.penguinrandomhouse.com/cover/9781250301697'
                             }
                             alt={book.title}
                         />

@@ -7,10 +7,11 @@ import Cart from '../pages/Cart';
 import Checkout from '../pages/Checkout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
+import OrderDetail from '../pages/OrderDetail';
 import PaymentResult from '../pages/PaymentResult';
-import Profile from '../pages/Profile';
 import Search from '../pages/Search';
 import SignUp from '../pages/SignUp';
+import User from '../pages/User';
 
 const router = createBrowserRouter([
     {
@@ -27,10 +28,6 @@ const router = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: 'profile',
-                element: <Profile />,
-            },
-            {
                 path: 'search',
                 element: <Search />,
             },
@@ -41,6 +38,14 @@ const router = createBrowserRouter([
             {
                 path: 'cart/:userId',
                 element: <Cart />,
+            },
+            {
+                path: '/user',
+                element: <User />,
+            },
+            {
+                path: '/order/:orderId',
+                element: <OrderDetail />,
             },
         ],
     },

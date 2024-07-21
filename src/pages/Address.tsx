@@ -72,6 +72,7 @@ const Address = () => {
                         },
                     });
                     setDistricts(res.data.data);
+                    console.log(res.data);
                 }
             } catch (error) {
                 console.error(error);
@@ -92,6 +93,7 @@ const Address = () => {
                         },
                     });
                     setWards(res.data.data);
+                    console.log(res.data);
                 }
             } catch (error) {
                 console.error(error);
@@ -108,7 +110,7 @@ const Address = () => {
             (province) => province.ProvinceID.toString() === provinceId
         );
         if (selectedProvince) {
-            form.setFieldValue('provinceName', selectedProvince.NameExtension[1]);
+            form.setFieldValue('provinceName', selectedProvince.ProvinceName);
         }
     };
 
@@ -240,7 +242,7 @@ const Address = () => {
                         <InputWrapper description='Phone' size='md' style={{ flex: '1 1 45%' }}>
                             <Input
                                 component={IMaskInput}
-                                mask='+84 (000) 000-00-00'
+                                mask='0000000000'
                                 placeholder='+84'
                                 size='md'
                                 {...form.getInputProps('phone')}

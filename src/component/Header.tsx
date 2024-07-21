@@ -122,7 +122,7 @@ const Header = () => {
                                 </Link>
                             </UnstyledButton>
 
-                            <Link to='/profile'>
+                            <Link to='/user'>
                                 <Avatar src={user.photoUrl} alt='avatar' size={'lg'} />
                             </Link>
                         </Group>

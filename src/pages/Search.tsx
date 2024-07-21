@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Text } from '@mantine/core';
+import { Button, Center, Flex, Group, Loader, Text } from '@mantine/core';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -13,10 +13,10 @@ const Search = () => {
     const query = searchParams.get('query');
     const genre = searchParams.get('genre');
     const [pageNo, setPageNo] = useState(1);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const searchBooks = async (query: string) => {
+    const searchBooksByQuery = async (query: string) => {
+        try {
             const res = await axiosInstance.get('/book/search', {
                 params: {
                     bookName: query,
@@ -30,15 +30,13 @@ const Search = () => {
             if (res.data.code === 200) {
                 setBooks(res.data.result);
             }
-        };
-        if (query != null) {
-            searchBooks(query);
+        } catch (error) {
+            console.log(error);
         }
-    }, [query, pageNo]);
+    };
 
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const searchBooks = async (genre: string) => {
+    const searchBooksByGenre = async (genre: string) => {
+        try {
             const res = await axiosInstance.get('/book/getByGenre', {
                 params: {
                     genreName: genre,
@@ -52,8 +50,41 @@ const Search = () => {
             if (res.data.code === 200) {
                 setBooks(res.data.result);
             }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+            setLoading(true);
+            try {
+                if (query != null) {
+                    await searchBooksByQuery(query);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
         };
-        if (genre != null) searchBooks(genre);
+        fetchBooks();
+    }, [query, pageNo]);
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+            setLoading(true);
+            try {
+                if (genre != null) {
+                    await searchBooksByGenre(genre);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBooks();
     }, [genre, pageNo]);
 
     const handlePrevPage = () => {
@@ -61,14 +92,14 @@ const Search = () => {
     };
 
     const handleNextPage = () => {
-        if (books.length == 12) setPageNo(pageNo + 1);
+        if (books.length === 12) setPageNo(pageNo + 1);
     };
 
     return (
         <Group>
             <SubBanner title={`Looking for: ${query ? query : genre}`} direction='Search' />
 
-            <Flex direction={'column'} pl={176} pr={176} mt={16} w={'100%'}>
+            <Flex direction='column' pl={176} pr={176} mt={16} w='100%'>
                 <Text fw={500} size='28px' mb={12}>
                     Search page
                 </Text>
@@ -77,23 +108,29 @@ const Search = () => {
                     There are {books.length} matching search results on <b>Page: {pageNo}</b>
                 </Text>
             </Flex>
-            <Flex
-                direction={'row'}
-                gap={'lg'}
-                wrap={'wrap'}
-                justify={'space-evenly'}
-                pl={176}
-                pr={176}
-                w={'100%'}
-            >
-                {books.map((book) => (
-                    <Book book={book} key={book.bookId} />
-                ))}
-            </Flex>
-            <Group justify='center' align='center' w={'100%'} mt={'lg'}>
+            {loading ? (
+                <Center w={'100%'}>
+                    <Loader />
+                </Center>
+            ) : (
+                <Flex
+                    direction='row'
+                    gap='lg'
+                    wrap='wrap'
+                    justify='space-evenly'
+                    pl={176}
+                    pr={176}
+                    w='100%'
+                >
+                    {books.map((book) => (
+                        <Book book={book} key={book.bookId} />
+                    ))}
+                </Flex>
+            )}
+            <Group justify='center' align='center' w='100%' mt='lg'>
                 <Button
                     onClick={handlePrevPage}
-                    disabled={pageNo == 1}
+                    disabled={pageNo === 1}
                     variant='light'
                     size='lg'
                     leftSection={<ArrowLeft />}

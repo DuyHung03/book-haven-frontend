@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { AddressEntity } from '../entity/AddressEntity';
 
 interface User {
     userId: string | null;
     email: string | null;
     phone: string | null;
-    address: string | null;
+    address: AddressEntity | null;
     photoUrl: string | null;
 }
 
@@ -14,6 +15,7 @@ interface UserStore {
     user: User;
     setUser: (newUser: User) => void;
     setToken: (newToken: string) => void;
+    setUserAddress: (address: AddressEntity) => void;
     clearUser: () => void;
 }
 
@@ -30,6 +32,10 @@ const useUserStore = create<UserStore>()(
             },
             setUser: (newUser) => set({ user: newUser }),
             setToken: (newToken) => set({ token: newToken }),
+            setUserAddress: (newAddress) =>
+                set((state) => ({
+                    user: { ...state.user, address: newAddress },
+                })),
             clearUser: () =>
                 set({
                     token: null,

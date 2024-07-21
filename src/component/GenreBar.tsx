@@ -24,11 +24,10 @@ const GenreBar = () => {
                 <HoverCardDropdown>
                     <Flex direction={'column'} align={'flex-start'}>
                         {genres.map((genre, index) => (
-                            <Link to={`/search?genre=${genre}`}>
+                            <Link to={`/search?genre=${genre}`} key={index}>
                                 <Button
                                     variant='transparent'
                                     leftSection={<ArrowRight fontSize='small' />}
-                                    key={index}
                                 >
                                     <Text c={'black'}>{genre}</Text>
                                 </Button>
@@ -43,8 +42,8 @@ const GenreBar = () => {
 
             <Group ml={12}>
                 {genres.slice(0, 5).map((genre, index) => (
-                    <Link to={`/search?genre=${genre}`}>
-                        <Button variant='transparent' color='black' key={index}>
+                    <Link to={`/search?genre=${genre}`} key={index}>
+                        <Button variant='transparent' color='black'>
                             <Text>{genre}</Text>
                         </Button>
                     </Link>
