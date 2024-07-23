@@ -20,7 +20,7 @@ import useUserStore from '../store/useUserStore';
 import Order from './order/Order';
 
 function Orders() {
-    const { user, token } = useUserStore();
+    const { user } = useUserStore();
     const [orders, setOrders] = useState<OrderEntity[]>([]);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('all');
@@ -31,9 +31,7 @@ function Orders() {
             params: {
                 userId: user.userId,
             },
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true,
         });
         console.log(res.data.result);
         if (res.data.code == 200) {

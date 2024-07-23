@@ -34,7 +34,7 @@ import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 
 const Checkout = () => {
-    const { user, token, setUserAddress } = useUserStore();
+    const { user, setUserAddress } = useUserStore();
     const { setCurrentOrderItems, setTotalAmount, clearCurrentOrder } = useCurrentOrderStore();
     const navigate = useNavigate();
     const [address, setAddress] = useState<AddressEntity | null>(null);
@@ -52,9 +52,7 @@ const Checkout = () => {
                 params: {
                     userId: user.userId,
                 },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                withCredentials: true,
             });
             calculateShippingFee(res.data.result);
             setAddress(res.data.result);
@@ -135,9 +133,7 @@ const Checkout = () => {
             params: {
                 amount: total,
             },
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true,
         });
         return res;
     };

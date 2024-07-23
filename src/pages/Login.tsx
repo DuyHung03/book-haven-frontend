@@ -3,13 +3,16 @@ import { hasLength, isEmail, useForm } from '@mantine/form';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
-import axiosInstance from '../network/httpRequest';
+import axiosInstance, { setAuthHeader } from '../network/httpRequest';
 import useUserStore from '../store/useUserStore';
+import { setTokenInCookie } from '../util/cookie';
+import { tokenVerify } from '../util/tokenVerify';
 
 const Login = () => {
-    const { setUser, setToken, user, token } = useUserStore();
+    const { setUser } = useUserStore();
     const navigate = useNavigate();
     const form = useForm({
         mode: 'uncontrolled',
@@ -37,7 +40,9 @@ const Login = () => {
             if (res.data.code === 200) {
                 const user = res.data.result.user;
                 const jwtToken = res.data.result.jwtToken;
-                setToken(jwtToken);
+
+                setTokenInCookie(jwtToken);
+                setAuthHeader();
                 setUser({
                     userId: user.userId,
                     email: user.email,
@@ -57,16 +62,17 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if (!token) {
-            return;
-        }
+        const cookie = new Cookies();
+        const token = cookie.get('accessToken');
+        if (token) {
+            const tokenDecoded = jwtDecode(token);
+            const exp = tokenDecoded?.exp;
 
-        const tokenDecoded = jwtDecode(token);
-        const exp = tokenDecoded?.exp;
-
-        if (exp && user.userId != null && exp * 1000 > new Date().getTime()) {
-            navigate('/');
+            if (tokenVerify(exp)) {
+                navigate('/');
+            }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

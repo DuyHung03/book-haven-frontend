@@ -11,10 +11,8 @@ interface User {
 }
 
 interface UserStore {
-    token: string | null;
     user: User;
     setUser: (newUser: User) => void;
-    setToken: (newToken: string) => void;
     setUserAddress: (address: AddressEntity) => void;
     clearUser: () => void;
 }
@@ -31,14 +29,12 @@ const useUserStore = create<UserStore>()(
                 photoUrl: null,
             },
             setUser: (newUser) => set({ user: newUser }),
-            setToken: (newToken) => set({ token: newToken }),
             setUserAddress: (newAddress) =>
                 set((state) => ({
                     user: { ...state.user, address: newAddress },
                 })),
             clearUser: () =>
                 set({
-                    token: null,
                     user: {
                         userId: null,
                         email: null,

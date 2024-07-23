@@ -3,6 +3,7 @@ import { Info, Person, Settings, ShoppingBag } from '@mui/icons-material';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../store/useUserStore';
+import { clearTokenInCookie } from '../util/cookie';
 import UserProfile from './UserProfile';
 
 const items = [
@@ -27,6 +28,7 @@ const SideBar = memo(
 
         const handleLogout = () => {
             clearUser();
+            clearTokenInCookie();
             navigate('/');
         };
 

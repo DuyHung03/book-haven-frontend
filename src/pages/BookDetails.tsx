@@ -24,7 +24,7 @@ import { formatNumberWithDots } from '../util/formatPrice';
 const BookDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, token } = useUserStore();
+    const { user } = useUserStore();
     const { setCartItem } = useCartStore();
 
     const book: BookEntity = location.state;
@@ -35,7 +35,7 @@ const BookDetails = () => {
     const [loading, setLoading] = useState(false);
 
     const handleAddtocart = async () => {
-        if (user.userId && token) {
+        if (user.userId) {
             console.log(book);
 
             setLoading(true);
@@ -47,9 +47,7 @@ const BookDetails = () => {
                         bookId: book.bookId,
                         quantity: value,
                     },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    withCredentials: true,
                 });
 
                 if (res.data.code === 200) {
@@ -78,7 +76,7 @@ const BookDetails = () => {
     };
 
     const handleAddToFavorite = () => {
-        if (user.userId && token) console.log(book);
+        if (user.userId) console.log(book);
         else {
             navigate('/login');
         }

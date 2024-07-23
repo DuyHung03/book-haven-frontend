@@ -13,7 +13,7 @@ import shippingService from '../network/shippingServiceApi';
 import useUserStore from '../store/useUserStore';
 
 const Address = () => {
-    const { user, token } = useUserStore();
+    const { user } = useUserStore();
     const navigate = useNavigate();
     const location = useLocation();
     const address: AddressEntity = location.state;
@@ -156,9 +156,7 @@ const Address = () => {
                     params: {
                         userId: user.userId,
                     },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    withCredentials: true,
                 }
             );
             console.log(res);

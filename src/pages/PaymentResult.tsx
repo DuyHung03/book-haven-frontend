@@ -8,7 +8,7 @@ import useCurrentOrderStore from '../store/useCurrentOrder';
 import useUserStore from '../store/useUserStore';
 
 const PaymentResult = () => {
-    const { token, user } = useUserStore();
+    const { user } = useUserStore();
     const { orderItems, totalAmount, isSaved, setIsSaved } = useCurrentOrderStore();
     const location = useLocation();
     const { paymentMethod } = location.state || {};
@@ -42,9 +42,7 @@ const PaymentResult = () => {
                 vnp_TransactionNo: vnp_TransactionNo,
                 vnp_TxnRef: vnp_TxnRef,
             },
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true,
         });
     };
 
@@ -56,9 +54,7 @@ const PaymentResult = () => {
                 params: {
                     userId: user.userId,
                 },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                withCredentials: true,
             }
         );
         if (res.data.code == 200) setCheckoutStatus(true);
@@ -96,9 +92,7 @@ const PaymentResult = () => {
 
     const createOrderOnShippingService = async () => {
         const res = await shippingService.post('v2/shipping-order/create', data, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true,
         });
         if (res.data.code == 200) {
             saveOrder();

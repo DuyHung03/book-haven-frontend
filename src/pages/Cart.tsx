@@ -12,7 +12,7 @@ import useUserStore from '../store/useUserStore';
 import { formatNumberWithDots } from '../util/formatPrice';
 
 const Cart = () => {
-    const { user, token } = useUserStore();
+    const { user } = useUserStore();
     const { setCartItem } = useCartStore();
 
     const [cartItems, setCartItems] = useState<CartItemEntity[]>([]);
@@ -23,7 +23,7 @@ const Cart = () => {
         try {
             const res = await axiosInstance.get('cart/get', {
                 params: { userId: user.userId },
-                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
             });
             setCartItems(res.data.result.cartItems);
             setCartItem(res.data.result.cartItems);
@@ -49,7 +49,7 @@ const Cart = () => {
         try {
             const res = await axiosInstance.delete('cart/delete', {
                 params: { bookId, userId: user.userId },
-                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
             });
             setCartItems((prev) => prev.filter((item) => item.bookId !== bookId));
             setSelectedItems([]);
@@ -66,7 +66,7 @@ const Cart = () => {
             try {
                 const res = await axiosInstance.put('cart/increaseQuantity', null, {
                     params: { bookId: cartItem.bookId, userId: user.userId },
-                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
                 });
                 setCartItems(res.data.result.cartItems);
                 setSelectedItems([]);
@@ -84,7 +84,7 @@ const Cart = () => {
             try {
                 const res = await axiosInstance.put('cart/decreaseQuantity', null, {
                     params: { bookId: cartItem.bookId, userId: user.userId },
-                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
                 });
                 setSelectedItems([]);
                 setCartItems(res.data.result.cartItems);
