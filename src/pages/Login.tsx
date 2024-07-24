@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
-import axiosInstance, { setAuthHeader } from '../network/httpRequest';
+import axiosInstance from '../network/httpRequest';
 import useUserStore from '../store/useUserStore';
 import { setTokenInCookie } from '../util/cookie';
 import { tokenVerify } from '../util/tokenVerify';
@@ -36,13 +36,12 @@ const Login = () => {
             };
 
             const res = await axiosInstance.post('auth/login', JSON.stringify(formData));
-            console.log(res);
             if (res.data.code === 200) {
                 const user = res.data.result.user;
                 const jwtToken = res.data.result.jwtToken;
 
                 setTokenInCookie(jwtToken);
-                setAuthHeader();
+
                 setUser({
                     userId: user.userId,
                     email: user.email,

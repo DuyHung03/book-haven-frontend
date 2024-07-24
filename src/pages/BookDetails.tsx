@@ -30,7 +30,8 @@ const BookDetails = () => {
     const book: BookEntity = location.state;
     const theme = useMantineTheme();
 
-    const [value, setValue] = useState(1);
+    //quantity
+    const [quantity, setQuantity] = useState(1);
 
     const [loading, setLoading] = useState(false);
 
@@ -45,7 +46,7 @@ const BookDetails = () => {
                     params: {
                         userId: user.userId,
                         bookId: book.bookId,
-                        quantity: value,
+                        quantity: quantity,
                     },
                     withCredentials: true,
                 });
@@ -152,23 +153,23 @@ const BookDetails = () => {
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
-                                disabled={book.quantityInStock == 0 || value == 1}
+                                disabled={book.quantityInStock == 0 || quantity == 1}
                                 onClick={() => {
-                                    setValue(value - 1);
+                                    setQuantity(quantity - 1);
                                 }}
                             >
                                 {<Remove />}
                             </Button>
-                            <Text>{book.quantityInStock > 0 ? value : 0}</Text>
+                            <Text>{book.quantityInStock > 0 ? quantity : 0}</Text>
                             <Button
                                 variant='outline'
                                 color={'gray'}
                                 size='xs'
                                 disabled={
-                                    book.quantityInStock == 0 || value >= book.quantityInStock
+                                    book.quantityInStock == 0 || quantity >= book.quantityInStock
                                 }
                                 onClick={() => {
-                                    setValue(value + 1);
+                                    setQuantity(quantity + 1);
                                 }}
                             >
                                 {<Add />}

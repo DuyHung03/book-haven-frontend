@@ -1,22 +1,22 @@
-import { Button, Center, Flex, Group, Loader, Text } from '@mantine/core';
+import { Button, Center, Flex, Group, Text } from '@mantine/core';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Book from '../component/Book';
+import BooksSkeleton from '../component/BooksSkeleton';
 import SubBanner from '../component/SubBanner';
 import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
 
 const Search = () => {
     const [searchParams] = useSearchParams();
-    const [books, setBooks] = useState<BookEntity[]>([]);
     const query = searchParams.get('query');
     const genre = searchParams.get('genre');
     const [pageNo, setPageNo] = useState(1);
-    const [loading, setLoading] = useState(false);
 
-    const searchBooksByQuery = async (query: string) => {
-        try {
+    const searchBooks = async () => {
+        if (query) {
             const res = await axiosInstance.get('/book/search', {
                 params: {
                     bookName: query,
@@ -25,18 +25,8 @@ const Search = () => {
                 },
             });
 
-            console.log(res);
-
-            if (res.data.code === 200) {
-                setBooks(res.data.result);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const searchBooksByGenre = async (genre: string) => {
-        try {
+            return res.data.result;
+        } else if (genre) {
             const res = await axiosInstance.get('/book/getByGenre', {
                 params: {
                     genreName: genre,
@@ -44,55 +34,29 @@ const Search = () => {
                     pageSize: 12,
                 },
             });
-
-            console.log(res);
-
-            if (res.data.code === 200) {
-                setBooks(res.data.result);
-            }
-        } catch (error) {
-            console.log(error);
+            return res.data.result;
         }
     };
 
-    useEffect(() => {
-        const fetchBooks = async () => {
-            setLoading(true);
-            try {
-                if (query != null) {
-                    await searchBooksByQuery(query);
-                }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBooks();
-    }, [query, pageNo]);
+    const {
+        data = [],
+        isLoading,
+        isError,
+    } = useQuery<BookEntity[]>({
+        queryKey: ['books', pageNo, query, genre],
+        queryFn: searchBooks,
+    });
 
     useEffect(() => {
-        const fetchBooks = async () => {
-            setLoading(true);
-            try {
-                if (genre != null) {
-                    await searchBooksByGenre(genre);
-                }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBooks();
-    }, [genre, pageNo]);
+        setPageNo(1);
+    }, [query, genre]);
 
     const handlePrevPage = () => {
-        if (pageNo > 1) setPageNo(pageNo - 1);
+        if (pageNo > 1) setPageNo((prev) => prev - 1);
     };
 
     const handleNextPage = () => {
-        if (books.length === 12) setPageNo(pageNo + 1);
+        if (data.length === 12) setPageNo((prev) => prev + 1);
     };
 
     return (
@@ -105,12 +69,12 @@ const Search = () => {
                 </Text>
 
                 <Text>
-                    There are {books.length} matching search results on <b>Page: {pageNo}</b>
+                    There are {data.length} matching search results on <b>Page: {pageNo}</b>
                 </Text>
             </Flex>
-            {loading ? (
+            {isLoading ? (
                 <Center w={'100%'}>
-                    <Loader />
+                    <BooksSkeleton />
                 </Center>
             ) : (
                 <Flex
@@ -122,10 +86,15 @@ const Search = () => {
                     pr={176}
                     w='100%'
                 >
-                    {books.map((book) => (
+                    {data.map((book) => (
                         <Book book={book} key={book.bookId} />
                     ))}
                 </Flex>
+            )}
+            {isError && (
+                <Center w={'100%'}>
+                    <Text color='red'>An error occurred while fetching data.</Text>
+                </Center>
             )}
             <Group justify='center' align='center' w='100%' mt='lg'>
                 <Button
@@ -139,7 +108,7 @@ const Search = () => {
                 </Button>
                 <Button
                     onClick={handleNextPage}
-                    disabled={books.length < 12}
+                    disabled={data.length < 12}
                     variant='light'
                     size='lg'
                     rightSection={<ArrowRight />}

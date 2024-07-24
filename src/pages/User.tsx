@@ -1,11 +1,16 @@
 import { Grid, Group } from '@mantine/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Orders from '../component/Orders';
 import Profile from '../component/Profile';
 import SideBar from '../component/SideBar';
+import useUserStore from '../store/useUserStore';
 
 const User = () => {
     const [selected, setSelected] = useState<string>('orders');
+    const { user } = useUserStore();
+    useEffect(() => {
+        if (user.userId == null) window.location.href = '/login';
+    }, []);
 
     const renderSelectedComponent = () => {
         switch (selected) {

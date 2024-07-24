@@ -12,7 +12,8 @@ import {
     Text,
 } from '@mantine/core';
 import { ShoppingCartCheckout } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { OrderEntity } from '../entity/OrderItemEntity';
 import axiosInstance from '../network/httpRequest';
@@ -21,8 +22,6 @@ import Order from './order/Order';
 
 function Orders() {
     const { user } = useUserStore();
-    const [orders, setOrders] = useState<OrderEntity[]>([]);
-    const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('all');
 
     // const [pending, setPending] = useState<OrderEntity[]>([]);
@@ -33,22 +32,13 @@ function Orders() {
             },
             withCredentials: true,
         });
-        console.log(res.data.result);
-        if (res.data.code == 200) {
-            setOrders(res.data.result);
-        }
+        return res.data.result;
     };
 
-    useEffect(() => {
-        try {
-            setLoading(true);
-            getOrders();
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    const { data, isLoading } = useQuery<OrderEntity[]>({
+        queryKey: ['orders'],
+        queryFn: getOrders,
+    });
 
     const handleActiveTab = (value: string | null) => {
         setActiveTab(value!);
@@ -63,12 +53,12 @@ function Orders() {
                 </TabsList>
 
                 <TabsPanel value={'all'}>
-                    {loading ? (
+                    {isLoading ? (
                         <Center w={'100%'}>
                             <Loader />
                         </Center>
-                    ) : orders.length > 0 ? (
-                        orders.map((order) => <Order key={order.orderId} order={order} />)
+                    ) : data!.length > 0 ? (
+                        data?.map((order) => <Order key={order.orderId} order={order} />)
                     ) : (
                         <Flex direction={'column'} w={'100%'} justify='center' align={'center'}>
                             <Image

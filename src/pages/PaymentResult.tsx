@@ -112,7 +112,7 @@ const PaymentResult = () => {
 
         if (paymentMethod == 'COD (Cash on Delivery)') {
             if (!isSaved) {
-                // saveOrder();
+                saveOrder();
                 setIsSaved(true);
                 createOrderOnShippingService();
                 console.log('cod');
