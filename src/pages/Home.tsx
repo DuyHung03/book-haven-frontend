@@ -1,4 +1,4 @@
-import { Flex, Group, Image } from '@mantine/core';
+import { Center, Flex, Group, Image, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import LazyLoad from 'react-lazy-load';
 import Banner from '../component/Banner';
@@ -19,7 +19,7 @@ const Home = () => {
         return res.data.result;
     };
 
-    const { data, isLoading } = useQuery<BookEntity[]>({
+    const { data, isLoading, isError } = useQuery<BookEntity[]>({
         queryKey: ['books'],
         queryFn: () => getRandomBooks(),
     });
@@ -38,6 +38,11 @@ const Home = () => {
                         </Flex>
                     ) : (
                         <BooksSkeleton />
+                    )}
+                    {isError && (
+                        <Center w={'100%'}>
+                            <Text c='red'>An error occurred while fetching data.</Text>
+                        </Center>
                     )}
                 </Group>
 

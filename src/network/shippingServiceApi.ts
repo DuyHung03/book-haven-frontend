@@ -7,6 +7,7 @@ const shippingService = axios.create({
         Token: '63debb08-f560-11ee-a6e6-e60958111f48',
         ShopId: '191719',
     },
+    timeout: 20000,
 });
 
 export default shippingService;

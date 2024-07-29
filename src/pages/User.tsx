@@ -1,7 +1,7 @@
 import { Grid, Group } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import Orders from '../component/Orders';
-import Profile from '../component/Profile';
+import Profile from '../component/profile/Profile';
 import SideBar from '../component/SideBar';
 import useUserStore from '../store/useUserStore';
 

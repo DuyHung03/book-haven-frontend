@@ -4,13 +4,17 @@ import {
     Flex,
     Group,
     Image,
+    Input,
+    InputWrapper,
     Loader,
     Notification,
     Text,
     TextInput,
 } from '@mantine/core';
-import { matchesField, useForm } from '@mantine/form';
+import { isNotEmpty, matchesField, useForm } from '@mantine/form';
+import { Phone } from '@mui/icons-material';
 import { useState } from 'react';
+import { IMaskInput } from 'react-imask';
 import { Link, useNavigate } from 'react-router-dom';
 import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
@@ -20,12 +24,13 @@ import styles from '../style/SignUp.module.scss';
 const SignUp = () => {
     const form = useForm({
         mode: 'uncontrolled',
-        initialValues: { email: '', password: '', confirmPassword: '' },
+        initialValues: { email: '', password: '', confirmPassword: '', phone: '' },
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
             password: (value) =>
                 value.length < 8 ? 'Password must have at least 8 characters' : null,
             confirmPassword: matchesField('password', 'Passwords are not the same'),
+            phone: isNotEmpty('Phone must not empty'),
         },
     });
 
@@ -40,6 +45,7 @@ const SignUp = () => {
             const formData = {
                 email: form.getValues().email,
                 password: form.getValues().password,
+                phone: form.getValues().phone,
             };
             const res = await axiosInstance.post('auth/register', JSON.stringify(formData));
 
@@ -87,6 +93,18 @@ const SignUp = () => {
                                 key={form.key('email')}
                                 {...form.getInputProps('email')}
                             />
+
+                            <InputWrapper label='Phone' size='md' mt='sm'>
+                                <Input
+                                    component={IMaskInput}
+                                    mask='0000000000'
+                                    placeholder='+84'
+                                    size='md'
+                                    {...form.getInputProps('phone')}
+                                    leftSection={<Phone fontSize='small' color='disabled' />}
+                                />
+                            </InputWrapper>
+
                             <TextInput
                                 type='password'
                                 size='md'
@@ -119,19 +137,15 @@ const SignUp = () => {
                                 )}
                             </Group>
 
-                            <Group justify='flex-start' mt='md'>
+                            <Group justify='flex-start' mt='md' mb={'md'}>
                                 <Link to='/login'>
-                                    <Text size='xs' c='cyan' fw='500'>
+                                    <Text size='md' c='cyan' fw='500'>
                                         Login
                                     </Text>
                                 </Link>
                             </Group>
                         </form>
                     </Group>
-
-                    <Text mt='md' mb='md' c={'gray'}>
-                        - Or -
-                    </Text>
 
                     <Button
                         h={36}

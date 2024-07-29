@@ -25,6 +25,8 @@ const Search = () => {
                 },
             });
 
+            console.log(res);
+
             return res.data.result;
         } else if (genre) {
             const res = await axiosInstance.get('/book/getByGenre', {
@@ -93,7 +95,7 @@ const Search = () => {
             )}
             {isError && (
                 <Center w={'100%'}>
-                    <Text color='red'>An error occurred while fetching data.</Text>
+                    <Text c='red'>An error occurred while fetching data.</Text>
                 </Center>
             )}
             <Group justify='center' align='center' w='100%' mt='lg'>

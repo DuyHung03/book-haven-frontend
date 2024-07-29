@@ -15,6 +15,7 @@ interface UserStore {
     setUser: (newUser: User) => void;
     setUserAddress: (address: AddressEntity) => void;
     clearUser: () => void;
+    setAvatar: (url: string) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -33,6 +34,7 @@ const useUserStore = create<UserStore>()(
                 set((state) => ({
                     user: { ...state.user, address: newAddress },
                 })),
+
             clearUser: () =>
                 set({
                     user: {
@@ -43,6 +45,10 @@ const useUserStore = create<UserStore>()(
                         photoUrl: null,
                     },
                 }),
+            setAvatar: (url: string) =>
+                set((state) => ({
+                    user: { ...state.user, photoUrl: url },
+                })),
         }),
         {
             name: 'user-storage',

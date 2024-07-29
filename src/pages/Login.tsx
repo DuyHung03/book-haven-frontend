@@ -50,6 +50,9 @@ const Login = () => {
                     photoUrl: user.photoUrl,
                 });
                 navigate('/');
+            } else {
+                form.setFieldError('email', 'Wrong email or password');
+                form.setFieldError('password', 'Wrong email or password');
             }
         } catch (error) {
             console.error('Login failed:', error);
@@ -126,19 +129,15 @@ const Login = () => {
                             )}
                         </Group>
 
-                        <Group justify='flex-start' mt='md'>
+                        <Group justify='flex-start' mt='md' mb={'md'}>
                             <Link to='/signup'>
-                                <Text size='xs' c='cyan' fw='500'>
+                                <Text size='md' c='cyan' fw='500'>
                                     Sign up
                                 </Text>
                             </Link>
                         </Group>
                     </form>
                 </Group>
-
-                <Text mt='md' mb='md' c={'gray'}>
-                    - Or -
-                </Text>
 
                 <Button
                     h={36}

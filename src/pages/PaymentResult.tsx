@@ -57,7 +57,9 @@ const PaymentResult = () => {
                 withCredentials: true,
             }
         );
-        if (res.data.code == 200) setCheckoutStatus(true);
+        if (res.data.code == 200) {
+            setCheckoutStatus(true);
+        }
         console.log(totalAmount);
     };
 
@@ -91,9 +93,7 @@ const PaymentResult = () => {
     };
 
     const createOrderOnShippingService = async () => {
-        const res = await shippingService.post('v2/shipping-order/create', data, {
-            withCredentials: true,
-        });
+        const res = await shippingService.post('v2/shipping-order/create', data, {});
         if (res.data.code == 200) {
             saveOrder();
         }
@@ -112,9 +112,8 @@ const PaymentResult = () => {
 
         if (paymentMethod == 'COD (Cash on Delivery)') {
             if (!isSaved) {
-                saveOrder();
-                setIsSaved(true);
                 createOrderOnShippingService();
+                setIsSaved(true);
                 console.log('cod');
             }
         }

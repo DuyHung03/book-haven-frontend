@@ -35,7 +35,11 @@ function Orders() {
         return res.data.result;
     };
 
-    const { data, isLoading } = useQuery<OrderEntity[]>({
+    const {
+        data = [],
+        isLoading,
+        isError,
+    } = useQuery<OrderEntity[]>({
         queryKey: ['orders'],
         queryFn: getOrders,
     });
@@ -54,11 +58,11 @@ function Orders() {
 
                 <TabsPanel value={'all'}>
                     {isLoading ? (
-                        <Center w={'100%'}>
+                        <Center w={'100%'} mt={24}>
                             <Loader />
                         </Center>
                     ) : data!.length > 0 ? (
-                        data?.map((order) => <Order key={order.orderId} order={order} />)
+                        data?.map((order, index) => <Order key={index} order={order} />)
                     ) : (
                         <Flex direction={'column'} w={'100%'} justify='center' align={'center'}>
                             <Image
@@ -81,6 +85,11 @@ function Orders() {
                                 </Button>
                             </Link>
                         </Flex>
+                    )}
+                    {isError && (
+                        <Center w={'100%'}>
+                            <Text c='red'>An error occurred while fetching data.</Text>
+                        </Center>
                     )}
                 </TabsPanel>
                 <TabsPanel value={'to-cancel'}>

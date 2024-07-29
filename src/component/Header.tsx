@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import { FavoriteBorderOutlined, Search, ShoppingCartOutlined } from '@mui/icons-material';
 import { Badge } from '@mui/material';
-import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo_only.png';
@@ -21,20 +20,10 @@ import styles from '../style/Header.module.scss';
 import GenreBar from './GenreBar';
 
 const Header = () => {
-    const { user, token } = useUserStore();
+    const { user } = useUserStore();
     const { cartItems } = useCartStore();
     const [searchValue, setSearchValue] = useState('');
     const navigate = useNavigate();
-
-    function isTokenExpired(token: string | null | undefined) {
-        if (token != null) {
-            const decodedToken = jwtDecode<{ exp: number }>(token);
-            if (decodedToken && decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     const handleSearchClick = () => {
         if (searchValue.trim()) {
@@ -42,6 +31,8 @@ const Header = () => {
             navigate(`/search?query=${searchValue}`);
         }
     };
+
+    console.log(cartItems.length);
 
     const handleKeyEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') handleSearchClick();
@@ -93,7 +84,7 @@ const Header = () => {
                 />
 
                 <Group>
-                    {!user.userId || isTokenExpired(token) ? (
+                    {!user.userId ? (
                         <Group>
                             <Link to='/signup'>
                                 <Button variant='outline' radius={'md'}>
@@ -122,7 +113,7 @@ const Header = () => {
                                 </Link>
                             </UnstyledButton>
 
-                            <Link to='/user'>
+                            <Link to={`user/${user.userId}`}>
                                 <Avatar src={user.photoUrl} alt='avatar' size={'lg'} />
                             </Link>
                         </Group>

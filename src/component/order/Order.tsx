@@ -18,7 +18,7 @@ const Order = ({ order }: { order: OrderEntity }) => {
                 </Text>
                 <Group w={'100%'}>
                     {order.orderItems.map((item, index) => (
-                        <Group w={'100%'}>
+                        <Group w={'100%'} key={index}>
                             <Image
                                 key={index}
                                 src={item.imgUrls[0]}
