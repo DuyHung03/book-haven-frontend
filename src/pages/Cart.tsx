@@ -9,7 +9,7 @@ import { CartItemEntity } from '../entity/CartItemEntity';
 import axiosInstance from '../network/httpRequest';
 import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 
 const Cart = () => {
     const { user } = useUserStore();

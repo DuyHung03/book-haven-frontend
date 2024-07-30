@@ -2,7 +2,7 @@ import { Button, Center, Checkbox, CloseButton, Group, Image, Table, Text } from
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { CartItemEntity } from '../entity/CartItemEntity';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 
 const CartItem = memo(
     ({

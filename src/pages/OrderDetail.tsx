@@ -2,7 +2,7 @@ import { Button, Divider, Flex, Group, Image, Text } from '@mantine/core';
 import { ArrowLeft } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { OrderEntity } from '../entity/OrderItemEntity';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 
 function OrderDetail() {
     const location = useLocation();

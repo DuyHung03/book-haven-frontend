@@ -31,7 +31,7 @@ import axiosInstance from '../network/httpRequest';
 import shippingService from '../network/shippingServiceApi';
 import useCurrentOrderStore from '../store/useCurrentOrder';
 import useUserStore from '../store/useUserStore';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 
 const Checkout = () => {
     const { user, setUserAddress } = useUserStore();

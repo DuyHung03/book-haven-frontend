@@ -20,7 +20,7 @@ import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
 import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 const BookDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();

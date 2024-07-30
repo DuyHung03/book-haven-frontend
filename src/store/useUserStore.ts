@@ -8,6 +8,9 @@ interface User {
     phone: string | null;
     address: AddressEntity | null;
     photoUrl: string | null;
+    name: string | null;
+    gender: string | null;
+    birthday: string | null;
 }
 
 interface UserStore {
@@ -28,6 +31,9 @@ const useUserStore = create<UserStore>()(
                 phone: null,
                 address: null,
                 photoUrl: null,
+                name: null,
+                gender: null,
+                birthday: null,
             },
             setUser: (newUser) => set({ user: newUser }),
             setUserAddress: (newAddress) =>
@@ -43,6 +49,9 @@ const useUserStore = create<UserStore>()(
                         phone: null,
                         address: null,
                         photoUrl: null,
+                        name: null,
+                        gender: null,
+                        birthday: null,
                     },
                 }),
             setAvatar: (url: string) =>

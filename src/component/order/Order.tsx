@@ -1,7 +1,7 @@
 import { Divider, Flex, Group, Image, Text, UnstyledButton } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { OrderEntity } from '../../entity/OrderItemEntity';
-import { formatNumberWithDots } from '../../util/formatPrice';
+import { formatNumberWithDots } from '../../util/utils';
 
 const Order = ({ order }: { order: OrderEntity }) => {
     return (

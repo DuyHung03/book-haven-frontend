@@ -3,7 +3,7 @@ import { FavoriteBorderOutlined } from '@mui/icons-material';
 import LazyLoad from 'react-lazy-load';
 import { Link } from 'react-router-dom';
 import { BookEntity } from '../entity/BookEntity';
-import { formatNumberWithDots } from '../util/formatPrice';
+import { formatNumberWithDots } from '../util/utils';
 
 const Book = ({ book }: { book: BookEntity }) => {
     return (

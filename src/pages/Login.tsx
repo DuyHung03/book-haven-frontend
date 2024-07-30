@@ -48,6 +48,9 @@ const Login = () => {
                     phone: user.phone,
                     address: user.address,
                     photoUrl: user.photoUrl,
+                    name: user.name,
+                    birthday: user.birthday,
+                    gender: user.gender,
                 });
                 navigate('/');
             } else {

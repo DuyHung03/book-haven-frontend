@@ -12,6 +12,7 @@ import BookDetails from '../pages/BookDetails';
 import Cart from '../pages/Cart';
 import ChangePassword from '../pages/ChangePassword';
 import Checkout from '../pages/Checkout';
+import EditProfile from '../pages/EditProfile';
 import EmailVerify from '../pages/EmailVerify';
 import Error404 from '../pages/Error404';
 import Home from '../pages/Home';
@@ -42,6 +43,7 @@ const router = createBrowserRouter(
                 <Route path='user/:userId' element={<User />} />
                 <Route path='user/:userId/verification' element={<EmailVerify />} />
                 <Route path='user/:userId/change-password' element={<ChangePassword />} />
+                <Route path='user/:userId/edit-profile' element={<EditProfile />} />
                 <Route path='order/:orderId' element={<OrderDetail />} />
             </Route>
             <Route path='/login' element={<Login />} />
