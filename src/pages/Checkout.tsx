@@ -24,7 +24,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import CheckoutAddress from '../component/CheckoutAddress';
 import CheckoutHeader from '../component/CheckoutHeader';
-import OrderItem from '../component/OrderItem';
+import OrderItem from '../component/order/OrderItem';
 import { AddressEntity } from '../entity/AddressEntity';
 import { CartItemEntity } from '../entity/CartItemEntity';
 import axiosInstance from '../network/httpRequest';

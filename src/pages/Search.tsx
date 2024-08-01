@@ -6,14 +6,14 @@ import { useSearchParams } from 'react-router-dom';
 import Book from '../component/Book';
 import BooksSkeleton from '../component/BooksSkeleton';
 import SubBanner from '../component/SubBanner';
-import { BookEntity } from '../entity/BookEntity';
+import { BooksResponse } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
 
 const Search = () => {
     const [searchParams] = useSearchParams();
     const query = searchParams.get('query');
     const genre = searchParams.get('genre');
-    const [pageNo, setPageNo] = useState(1);
+    const [pageNo, setPageNo] = useState(0);
 
     const searchBooks = async () => {
         if (query) {
@@ -40,17 +40,13 @@ const Search = () => {
         }
     };
 
-    const {
-        data = [],
-        isLoading,
-        isError,
-    } = useQuery<BookEntity[]>({
+    const { data, isLoading, isError } = useQuery<BooksResponse>({
         queryKey: ['books', pageNo, query, genre],
         queryFn: searchBooks,
     });
 
     useEffect(() => {
-        setPageNo(1);
+        setPageNo(0);
     }, [query, genre]);
 
     const handlePrevPage = () => {
@@ -58,7 +54,7 @@ const Search = () => {
     };
 
     const handleNextPage = () => {
-        if (data.length === 12) setPageNo((prev) => prev + 1);
+        if (data?.books.length === 12) setPageNo((prev) => prev + 1);
     };
 
     return (
@@ -71,7 +67,7 @@ const Search = () => {
                 </Text>
 
                 <Text>
-                    There are {data.length} matching search results on <b>Page: {pageNo}</b>
+                    There are {data?.totalCount} matching search results. <b>Page: {pageNo + 1}</b>
                 </Text>
             </Flex>
             {isLoading ? (
@@ -88,7 +84,7 @@ const Search = () => {
                     pr={176}
                     w='100%'
                 >
-                    {data.map((book) => (
+                    {data?.books.map((book) => (
                         <Book book={book} key={book.bookId} />
                     ))}
                 </Flex>
@@ -101,7 +97,7 @@ const Search = () => {
             <Group justify='center' align='center' w='100%' mt='lg'>
                 <Button
                     onClick={handlePrevPage}
-                    disabled={pageNo === 1}
+                    disabled={pageNo + 1 == 1}
                     variant='light'
                     size='lg'
                     leftSection={<ArrowLeft />}
@@ -110,7 +106,7 @@ const Search = () => {
                 </Button>
                 <Button
                     onClick={handleNextPage}
-                    disabled={data.length < 12}
+                    disabled={pageNo + 1 == data?.totalPage}
                     variant='light'
                     size='lg'
                     rightSection={<ArrowRight />}

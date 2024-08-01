@@ -15,10 +15,10 @@ import { ShoppingCartCheckout } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { OrderEntity } from '../entity/OrderItemEntity';
-import axiosInstance from '../network/httpRequest';
-import useUserStore from '../store/useUserStore';
-import Order from './order/Order';
+import { OrderEntity } from '../../entity/OrderItemEntity';
+import axiosInstance from '../../network/httpRequest';
+import useUserStore from '../../store/useUserStore';
+import Order from './Order';
 
 function Orders() {
     const { user } = useUserStore();

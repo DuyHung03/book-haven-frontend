@@ -12,3 +12,9 @@ export interface BookEntity {
     genreNameList?: Array<string>;
     quantityInStock: number;
 }
+
+export interface BooksResponse {
+    books: BookEntity[];
+    totalPage: number;
+    totalCount: number;
+}

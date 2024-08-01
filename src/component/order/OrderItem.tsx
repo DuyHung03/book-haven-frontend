@@ -1,7 +1,7 @@
 import { Flex, Group, Image, Text } from '@mantine/core';
 import { memo } from 'react';
-import { CartItemEntity } from '../entity/CartItemEntity';
-import { formatNumberWithDots } from '../util/utils';
+import { CartItemEntity } from '../../entity/CartItemEntity';
+import { formatNumberWithDots } from '../../util/utils';
 
 export default memo(function OrderItem({ cartItem }: { cartItem: CartItemEntity }) {
     const img = cartItem.imgUrls[0]
