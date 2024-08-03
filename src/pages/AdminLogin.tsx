@@ -1,17 +1,15 @@
-// Login.tsx
 import { Button, Center, Flex, Group, Image, Loader, Text, TextInput } from '@mantine/core';
 import { hasLength, isEmail, useForm } from '@mantine/form';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
 import axiosInstance from '../network/httpRequest';
 import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
 import { setTokenInCookie } from '../util/cookie';
 
-const Login = () => {
+const AdminLogin = () => {
     const { setUser } = useUserStore();
     const { login } = useAuthStore();
     const navigate = useNavigate();
@@ -40,12 +38,13 @@ const Login = () => {
             console.log(res);
 
             if (res.data.code === 200) {
-                const user = res.data.result.user;
-                const jwtToken = res.data.result.jwtToken;
                 const role = res.data.result.user.role;
+                if (role.id == 2) {
+                    const user = res.data.result.user;
+                    const jwtToken = res.data.result.jwtToken;
 
-                if (role.id == 1) {
                     setTokenInCookie(jwtToken);
+
                     setUser({
                         userId: user.userId,
                         email: user.email,
@@ -57,7 +56,7 @@ const Login = () => {
                         gender: user.gender,
                     });
                     login(role.name);
-                    navigate('/');
+                    navigate('/admin');
                 } else {
                     toast.error('Invalid user');
                 }
@@ -84,7 +83,7 @@ const Login = () => {
                     </Link>
 
                     <Text fw={600} size={'xl'} lts={1.5} mt={'lg'} c={'cyan'}>
-                        PLEASE LOGIN
+                        LOGIN WITH ADMIN ROLE
                     </Text>
                     <Group mt={30}>
                         <form onSubmit={form.onSubmit(handleLogin)}>
@@ -109,7 +108,7 @@ const Login = () => {
                             />
 
                             <Group justify='flex-start' mt='md'>
-                                <Link to='/signup'>
+                                <Link to='#'>
                                     <Text size='sm' c='cyan' fw='500'>
                                         Forgot password?
                                     </Text>
@@ -127,36 +126,12 @@ const Login = () => {
                                     </Button>
                                 )}
                             </Group>
-
-                            <Group justify='space-between' mt='md' mb={'md'}>
-                                <Link to='/signup'>
-                                    <Text size='md' c='cyan' fw='500'>
-                                        Sign up
-                                    </Text>
-                                </Link>
-                                <Link to='/login-admin'>
-                                    <Text size='md' c='cyan' fw='500'>
-                                        Login with ADMIN
-                                    </Text>
-                                </Link>
-                            </Group>
                         </form>
                     </Group>
-
-                    <Button
-                        h={36}
-                        leftSection={<Image src={gg_logo} alt='' w={24} />}
-                        variant='outline'
-                        c={'gray'}
-                        color='gray'
-                        fullWidth
-                    >
-                        Connect with Google
-                    </Button>
                 </Flex>
             </Group>
         </>
     );
 };
 
-export default Login;
+export default AdminLogin;

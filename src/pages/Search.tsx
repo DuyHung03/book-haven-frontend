@@ -50,13 +50,12 @@ const Search = () => {
     }, [query, genre]);
 
     const handlePrevPage = () => {
-        if (pageNo > 1) setPageNo((prev) => prev - 1);
+        if (pageNo > 0) setPageNo((prev) => prev - 1);
     };
 
     const handleNextPage = () => {
-        if (data?.books.length === 12) setPageNo((prev) => prev + 1);
+        if (pageNo < (data?.totalPage ?? 0) - 1) setPageNo((prev) => prev + 1);
     };
-
     return (
         <Group>
             <SubBanner title={`Looking for: ${query ? query : genre}`} direction='Search' />
@@ -67,7 +66,8 @@ const Search = () => {
                 </Text>
 
                 <Text>
-                    There are {data?.totalCount} matching search results. <b>Page: {pageNo + 1}</b>
+                    There are <b>{data?.totalCount}</b> matching search results |{' '}
+                    <b>Page: {pageNo + 1}</b>
                 </Text>
             </Flex>
             {isLoading ? (
@@ -97,18 +97,20 @@ const Search = () => {
             <Group justify='center' align='center' w='100%' mt='lg'>
                 <Button
                     onClick={handlePrevPage}
-                    disabled={pageNo + 1 == 1}
+                    disabled={pageNo === 0}
                     variant='light'
                     size='lg'
+                    color='cyan'
                     leftSection={<ArrowLeft />}
                 >
                     Previous
                 </Button>
                 <Button
                     onClick={handleNextPage}
-                    disabled={pageNo + 1 == data?.totalPage}
+                    disabled={pageNo >= (data?.totalPage ?? 0) - 1}
                     variant='light'
                     size='lg'
+                    color='cyan'
                     rightSection={<ArrowRight />}
                 >
                     Next

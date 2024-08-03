@@ -1,3 +1,4 @@
+// Router.tsx
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -5,9 +6,12 @@ import {
     RouterProvider,
     ScrollRestoration,
 } from 'react-router-dom';
+import AdminLayout from '../layout/AdminLayout';
 import CheckoutLayout from '../layout/CheckoutLayout';
 import HeaderLayout from '../layout/HeaderLayout';
 import Address from '../pages/Address';
+import AdminHome from '../pages/admin/AdminHome';
+import AdminLogin from '../pages/AdminLogin';
 import BookDetails from '../pages/BookDetails';
 import Cart from '../pages/Cart';
 import ChangePassword from '../pages/ChangePassword';
@@ -22,6 +26,7 @@ import PaymentResult from '../pages/PaymentResult';
 import Search from '../pages/Search';
 import SignUp from '../pages/SignUp';
 import User from '../pages/User';
+import ProtectedRoute from './ProtectedRoute'; // Make sure to import the ProtectedRoute component
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -31,7 +36,7 @@ const router = createBrowserRouter(
                 element={
                     <>
                         <ScrollRestoration />
-                        <HeaderLayout />
+                        <ProtectedRoute element={<HeaderLayout />} allowedRoles={['ROLE_USER']} />
                     </>
                 }
                 errorElement={<Error404 />}
@@ -47,13 +52,23 @@ const router = createBrowserRouter(
                 <Route path='order/:orderId' element={<OrderDetail />} />
             </Route>
             <Route path='/login' element={<Login />} />
+            <Route path='/login-admin' element={<AdminLogin />} />
             <Route path='/signup' element={<SignUp />} />
+
+            <Route
+                path='/admin'
+                element={<ProtectedRoute element={<AdminLayout />} allowedRoles={['ROLE_ADMIN']} />}
+                errorElement={<Error404 />}
+            >
+                <Route index element={<AdminHome />} />
+            </Route>
+
             <Route
                 path='/checkout/:userId'
                 element={
                     <>
                         <ScrollRestoration />
-                        <CheckoutLayout />
+                        <ProtectedRoute element={<CheckoutLayout />} allowedRoles={['ROLE_USER']} />
                     </>
                 }
                 errorElement={<Error404 />}

@@ -1,7 +1,7 @@
 import { Button, Divider, Flex, Group, Text } from '@mantine/core';
 import { Info, Person, Settings, ShoppingBag } from '@mui/icons-material';
 import { memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
 import { clearTokenInCookie } from '../util/cookie';
 import UserProfile from './UserProfile';
@@ -24,12 +24,12 @@ const items = [
 const SideBar = memo(
     ({ selected, onSelect }: { selected: string; onSelect: (select: string) => void }) => {
         const { clearUser } = useUserStore();
-        const navigate = useNavigate();
+        const { logout } = useAuthStore();
 
         const handleLogout = () => {
             clearUser();
             clearTokenInCookie();
-            navigate('/');
+            logout();
         };
 
         return (
