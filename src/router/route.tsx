@@ -1,4 +1,3 @@
-// Router.tsx
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -26,13 +25,26 @@ import PaymentResult from '../pages/PaymentResult';
 import Search from '../pages/Search';
 import SignUp from '../pages/SignUp';
 import User from '../pages/User';
-import ProtectedRoute from './ProtectedRoute'; // Make sure to import the ProtectedRoute component
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <>
+            {/* Public Routes with Header Layout */}
+            <Route path='/' element={<HeaderLayout />} errorElement={<Error404 />}>
+                <Route index element={<Home />} />
+                <Route path='search' element={<Search />} />
+                <Route path='book/:bookTitle' element={<BookDetails />} />
+            </Route>
+
+            {/* Authentication Routes */}
+            <Route path='/login' element={<Login />} />
+            <Route path='/login-admin' element={<AdminLogin />} />
+            <Route path='/signup' element={<SignUp />} />
+
+            {/* Protected User Routes with Header Layout */}
             <Route
-                path='/'
+                path='/user'
                 element={
                     <>
                         <ScrollRestoration />
@@ -41,20 +53,15 @@ const router = createBrowserRouter(
                 }
                 errorElement={<Error404 />}
             >
-                <Route index element={<Home />} />
-                <Route path='search' element={<Search />} />
-                <Route path='book/:bookTitle' element={<BookDetails />} />
                 <Route path='cart/:userId' element={<Cart />} />
-                <Route path='user/:userId' element={<User />} />
-                <Route path='user/:userId/verification' element={<EmailVerify />} />
-                <Route path='user/:userId/change-password' element={<ChangePassword />} />
-                <Route path='user/:userId/edit-profile' element={<EditProfile />} />
+                <Route path=':userId' element={<User />} />
+                <Route path=':userId/verification' element={<EmailVerify />} />
+                <Route path=':userId/change-password' element={<ChangePassword />} />
+                <Route path=':userId/edit-profile' element={<EditProfile />} />
                 <Route path='order/:orderId' element={<OrderDetail />} />
             </Route>
-            <Route path='/login' element={<Login />} />
-            <Route path='/login-admin' element={<AdminLogin />} />
-            <Route path='/signup' element={<SignUp />} />
 
+            {/* Admin Protected Routes */}
             <Route
                 path='/admin'
                 element={<ProtectedRoute element={<AdminLayout />} allowedRoles={['ROLE_ADMIN']} />}
@@ -63,6 +70,7 @@ const router = createBrowserRouter(
                 <Route index element={<AdminHome />} />
             </Route>
 
+            {/* Checkout Protected Routes */}
             <Route
                 path='/checkout/:userId'
                 element={
@@ -76,6 +84,8 @@ const router = createBrowserRouter(
                 <Route index element={<Checkout />} />
                 <Route path='address' element={<Address />} />
             </Route>
+
+            {/* Payment Result */}
             <Route path='/payment_return' element={<PaymentResult />} />
         </>
     )

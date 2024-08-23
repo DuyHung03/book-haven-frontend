@@ -32,8 +32,6 @@ const Header = () => {
         }
     };
 
-    console.log(cartItems.length);
-
     const handleKeyEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') handleSearchClick();
     };
@@ -106,14 +104,14 @@ const Header = () => {
                             </UnstyledButton>
 
                             <UnstyledButton>
-                                <Link to={`/cart/${user.userId}`}>
+                                <Link to={`/user/cart/${user.userId}`}>
                                     <Badge badgeContent={cartItems.length} color='error'>
                                         <ShoppingCartOutlined fontSize='large' color='primary' />
                                     </Badge>
                                 </Link>
                             </UnstyledButton>
 
-                            <Link to={`user/${user.userId}`}>
+                            <Link to={`/user/${user.userId}`}>
                                 <Avatar src={user.photoUrl} alt='avatar' size={'lg'} />
                             </Link>
                         </Group>

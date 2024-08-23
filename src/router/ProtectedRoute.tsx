@@ -1,9 +1,7 @@
 // ProtectedRoute.tsx
 import React from 'react';
-import { Navigate } from 'react-router-dom';
-import Cookies from 'universal-cookie';
+import { Navigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../store/useAuthStore';
-import { tokenVerify } from '../util/tokenVerify';
 
 interface ProtectedRouteProps {
     element: React.ReactElement;
@@ -12,14 +10,12 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, allowedRoles }) => {
     const { isAuthenticated, role } = useAuthStore();
+    const location = useLocation();
 
-    const cookie = new Cookies();
-    const token = cookie.get('accessToken');
+    if (!isAuthenticated || (role && !allowedRoles.includes(role))) {
+        console.log(location);
 
-    const isValidToken = tokenVerify(token);
-
-    if (!isValidToken || !isAuthenticated || (role && !allowedRoles.includes(role))) {
-        return <Navigate to='/login' replace />;
+        return <Navigate to='/login' replace state={{ prevUrl: location.pathname }} />;
     }
 
     return element;

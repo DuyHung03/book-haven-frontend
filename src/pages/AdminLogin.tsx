@@ -7,7 +7,6 @@ import logo from '../assets/logo_only.png';
 import axiosInstance from '../network/httpRequest';
 import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
-import { setTokenInCookie } from '../util/cookie';
 
 const AdminLogin = () => {
     const { setUser } = useUserStore();
@@ -41,9 +40,6 @@ const AdminLogin = () => {
                 const role = res.data.result.user.role;
                 if (role.id == 2) {
                     const user = res.data.result.user;
-                    const jwtToken = res.data.result.jwtToken;
-
-                    setTokenInCookie(jwtToken);
 
                     setUser({
                         userId: user.userId,

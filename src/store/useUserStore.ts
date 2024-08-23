@@ -24,7 +24,6 @@ interface UserStore {
 const useUserStore = create<UserStore>()(
     persist(
         (set) => ({
-            token: null,
             user: {
                 userId: null,
                 email: null,

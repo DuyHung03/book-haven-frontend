@@ -1,6 +1,6 @@
 // store.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface AuthStore {
     isAuthenticated: boolean;
@@ -19,6 +19,7 @@ const useAuthStore = create<AuthStore>()(
         }),
         {
             name: 'auth-storage',
+            storage: createJSONStorage(() => localStorage),
         }
     )
 );

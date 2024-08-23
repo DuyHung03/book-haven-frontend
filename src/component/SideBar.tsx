@@ -3,7 +3,6 @@ import { Info, Person, Settings, ShoppingBag } from '@mui/icons-material';
 import { memo } from 'react';
 import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
-import { clearTokenInCookie } from '../util/cookie';
 import UserProfile from './UserProfile';
 
 const items = [
@@ -28,7 +27,6 @@ const SideBar = memo(
 
         const handleLogout = () => {
             clearUser();
-            clearTokenInCookie();
             logout();
         };
 

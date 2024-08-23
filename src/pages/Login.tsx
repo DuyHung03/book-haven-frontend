@@ -1,20 +1,27 @@
 // Login.tsx
 import { Button, Center, Flex, Group, Image, Loader, Text, TextInput } from '@mantine/core';
 import { hasLength, isEmail, useForm } from '@mantine/form';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import gg_logo from '../assets/gg_logo.svg';
 import logo from '../assets/logo_only.png';
 import axiosInstance from '../network/httpRequest';
 import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
-import { setTokenInCookie } from '../util/cookie';
 
 const Login = () => {
     const { setUser } = useUserStore();
-    const { login } = useAuthStore();
+    const { login, isAuthenticated } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
+
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: { email: '', password: '' },
@@ -41,11 +48,9 @@ const Login = () => {
 
             if (res.data.code === 200) {
                 const user = res.data.result.user;
-                const jwtToken = res.data.result.jwtToken;
                 const role = res.data.result.user.role;
 
                 if (role.id == 1) {
-                    setTokenInCookie(jwtToken);
                     setUser({
                         userId: user.userId,
                         email: user.email,
@@ -57,7 +62,9 @@ const Login = () => {
                         gender: user.gender,
                     });
                     login(role.name);
-                    navigate('/');
+                    console.log(location);
+
+                    navigate(location?.state?.prevUrl ? location.state.prevUrl : '/');
                 } else {
                     toast.error('Invalid user');
                 }
@@ -132,11 +139,6 @@ const Login = () => {
                                 <Link to='/signup'>
                                     <Text size='md' c='cyan' fw='500'>
                                         Sign up
-                                    </Text>
-                                </Link>
-                                <Link to='/login-admin'>
-                                    <Text size='md' c='cyan' fw='500'>
-                                        Login with ADMIN
                                     </Text>
                                 </Link>
                             </Group>

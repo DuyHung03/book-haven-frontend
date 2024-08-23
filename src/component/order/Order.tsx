@@ -12,7 +12,7 @@ const Order = ({ order }: { order: OrderEntity }) => {
             p={12}
             style={{ borderBottom: '1px solid #ccc' }}
         >
-            <Link to={`/order/${order.orderId}`} state={order}>
+            <Link to={`/user/order/${order.orderId}`} state={order}>
                 <Text fs={'italic'} c={'dark'} pb={24}>
                     Order id: {order.orderId}
                 </Text>
