@@ -15,23 +15,19 @@ const handleAuthorizationError = () => {
     const { logout } = useAuthStore.getState();
     clearUser();
     logout();
-    window.location.href = '/login';
 };
 
 const refreshAccessToken = async () => {
     try {
-        const response = await axios.post(
-            'http://localhost:8080/api/v1/auth/refresh-token',
+        await axios.post(
+            'http://localhost:8080/api/v1/auth/refreshToken',
             {},
             {
-                withCredentials: true, // Ensure cookies are included
+                withCredentials: true,
             }
         );
-
-        // The new access token should automatically be set in an HttpOnly cookie
-        console.log('Access token refreshed:', response.data);
-        return response.data.accessToken; // Not used directly, since it's in a cookie
     } catch (error) {
+        console.log('Session expiry');
         handleAuthorizationError();
         throw error;
     }
@@ -46,9 +42,7 @@ axiosInstance.interceptors.response.use(
 
         if (
             error.response &&
-            (error.response.status === 401 ||
-                error.response.status === 403 ||
-                error.response.status === 400) &&
+            (error.response.status === 401 || error.response.status === 403) &&
             !originalRequest._retry
         ) {
             originalRequest._retry = true;
