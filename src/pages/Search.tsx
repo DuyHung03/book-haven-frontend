@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Group, Text } from '@mantine/core';
+import { Button, Center, Flex, Grid, GridCol, Group, Text } from '@mantine/core';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -8,12 +8,15 @@ import BooksSkeleton from '../component/BooksSkeleton';
 import SubBanner from '../component/SubBanner';
 import { BooksResponse } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
+import usePageTitle from '../util/usePageTitle';
 
 const Search = () => {
     const [searchParams] = useSearchParams();
     const query = searchParams.get('query');
     const genre = searchParams.get('genre');
     const [pageNo, setPageNo] = useState(0);
+
+    usePageTitle(query || genre || 'Search');
 
     const searchBooks = async () => {
         if (query) {
@@ -24,7 +27,6 @@ const Search = () => {
                     pageSize: 12,
                 },
             });
-
             console.log(res);
 
             return res.data.result;
@@ -33,9 +35,10 @@ const Search = () => {
                 params: {
                     genreName: genre,
                     pageNo: pageNo,
-                    pageSize: 12,
+                    pageSize: 10,
                 },
             });
+            console.log(res);
             return res.data.result;
         }
     };
@@ -43,6 +46,7 @@ const Search = () => {
     const { data, isLoading, isError } = useQuery<BooksResponse>({
         queryKey: ['books', pageNo, query, genre],
         queryFn: searchBooks,
+        staleTime: 1000 * 60 * 5, //5 mins
     });
 
     useEffect(() => {
@@ -75,19 +79,27 @@ const Search = () => {
                     <BooksSkeleton />
                 </Center>
             ) : (
-                <Flex
-                    direction='row'
-                    gap='lg'
-                    wrap='wrap'
-                    justify='space-evenly'
-                    pl={176}
-                    pr={176}
-                    w='100%'
-                >
+                // <Flex
+                //     direction='row'
+                //     gap='lg'
+                //     wrap='wrap'
+                //     justify='space-evenly'
+                //     pl={176}
+                //     pr={176}
+                //     w='100%'
+                // >
+                //     {data?.books.map((book) => (
+                //         <Book book={book} key={book.bookId} />
+                //     ))}
+                // </Flex>
+
+                <Grid pl={176} pr={176} w='100%'>
                     {data?.books.map((book) => (
-                        <Book book={book} key={book.bookId} />
+                        <GridCol span={2} key={book.bookId}>
+                            <Book book={book} />
+                        </GridCol>
                     ))}
-                </Flex>
+                </Grid>
             )}
             {isError && (
                 <Center w={'100%'}>

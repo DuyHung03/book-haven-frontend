@@ -1,17 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { AddressEntity } from '../entity/AddressEntity';
-
-interface User {
-    userId: string | null;
-    email: string | null;
-    phone: string | null;
-    address: AddressEntity | null;
-    photoUrl: string | null;
-    name: string | null;
-    gender: string | null;
-    birthday: string | null;
-}
+import { User } from '../entity/UserEntity';
 
 interface UserStore {
     user: User;

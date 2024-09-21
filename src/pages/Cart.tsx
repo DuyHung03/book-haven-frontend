@@ -9,11 +9,14 @@ import { CartItemEntity } from '../entity/CartItemEntity';
 import axiosInstance from '../network/httpRequest';
 import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
+import usePageTitle from '../util/usePageTitle';
 import { formatNumberWithDots } from '../util/utils';
 
 const Cart = () => {
     const { user } = useUserStore();
     const { setCartItem } = useCartStore();
+
+    usePageTitle('Cart');
 
     const [cartItems, setCartItems] = useState<CartItemEntity[]>([]);
     const [selectedItems, setSelectedItems] = useState<CartItemEntity[]>([]);

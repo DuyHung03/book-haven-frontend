@@ -20,6 +20,7 @@ import EmailVerify from '../pages/EmailVerify';
 import Error404 from '../pages/Error404';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
+import Oauth2Response from '../pages/Oauth2Response';
 import OrderDetail from '../pages/OrderDetail';
 import PaymentResult from '../pages/PaymentResult';
 import Search from '../pages/Search';
@@ -87,6 +88,7 @@ const router = createBrowserRouter(
 
             {/* Payment Result */}
             <Route path='/payment_return' element={<PaymentResult />} />
+            <Route path='/oauth2-response' element={<Oauth2Response />} />
         </>
     )
 );

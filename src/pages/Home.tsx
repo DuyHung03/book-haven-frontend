@@ -7,8 +7,10 @@ import BooksSkeleton from '../component/BooksSkeleton';
 import HeadingSection from '../component/HeadingSection';
 import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
+import usePageTitle from '../util/usePageTitle';
 
 const Home = () => {
+    usePageTitle('Home');
     const getRandomBooks = async () => {
         const res = await axiosInstance.get('/book/getRandom', {
             params: {
@@ -16,12 +18,15 @@ const Home = () => {
             },
         });
 
+        console.log(res);
+
         return res.data.result;
     };
 
     const { data, isLoading, isError } = useQuery<BookEntity[]>({
         queryKey: ['books'],
         queryFn: () => getRandomBooks(),
+        // staleTime: 1000 * 60 * 5, //5 mins
     });
 
     return (
@@ -31,7 +36,13 @@ const Home = () => {
                 <HeadingSection title='New Arrival' />
                 <Group mt={'lg'} mb={'xl'}>
                     {!isLoading ? (
-                        <Flex direction={'row'} gap={'lg'} wrap={'wrap'} justify={'space-between'}>
+                        <Flex
+                            direction={'row'}
+                            gap={'lg'}
+                            wrap={'wrap'}
+                            justify={'space-between'}
+                            style={{ maxWidth: '80%', margin: '0 auto' }}
+                        >
                             {data?.map((book) => (
                                 <Book book={book} key={book.bookId} />
                             ))}

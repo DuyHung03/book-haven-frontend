@@ -3,9 +3,11 @@ import { useState } from 'react';
 import Orders from '../component/order/Orders';
 import Profile from '../component/profile/Profile';
 import SideBar from '../component/SideBar';
+import usePageTitle from '../util/usePageTitle';
 
 const User = () => {
     const [selected, setSelected] = useState<string>('orders');
+    usePageTitle('Profile');
 
     const renderSelectedComponent = () => {
         switch (selected) {

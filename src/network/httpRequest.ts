@@ -3,11 +3,11 @@ import useAuthStore from '../store/useAuthStore';
 import useUserStore from '../store/useUserStore';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api/v1/',
+    baseURL: 'https://book-haven-api.onrender.com/api/v1/',
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true, // Ensure cookies are sent with requests
+    withCredentials: true,
 });
 
 const handleAuthorizationError = () => {
@@ -20,7 +20,7 @@ const handleAuthorizationError = () => {
 const refreshAccessToken = async () => {
     try {
         await axios.post(
-            'http://localhost:8080/api/v1/auth/refreshToken',
+            'https://book-haven-api.onrender.com/api/v1/auth/refreshToken',
             {},
             {
                 withCredentials: true,

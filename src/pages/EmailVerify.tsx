@@ -1,3 +1,4 @@
+import emailjs from '@emailjs/browser';
 import { Button, Center, Divider, Group, Text, TextInput } from '@mantine/core';
 import { isEmail, isNotEmpty, useForm } from '@mantine/form';
 import { Done } from '@mui/icons-material';
@@ -5,7 +6,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import axiosInstance from '../network/httpRequest';
 import useUserStore from '../store/useUserStore';
-
+import { generate6DigitCode } from '../util/utils';
 const EmailVerify = memo(() => {
     const { user } = useUserStore();
     const [time, setTime] = useState(0);
@@ -28,19 +29,48 @@ const EmailVerify = memo(() => {
         }
     }, [time]);
 
-    const handleSendCode = useCallback(async () => {
-        try {
-            setTime(60);
-            const res = await axiosInstance.get('email/changePassword', {
+    const saveOptToServer = async (code: string) => {
+        setTime(60);
+        const res = await axiosInstance.post(
+            'saveOpt',
+            {},
+            {
                 params: {
-                    email: user.email,
+                    code: code,
                 },
                 withCredentials: true,
-            });
-            console.log(res);
-        } catch (error) {
-            console.log(error);
+            }
+        );
+        if (res.data.code == 200) {
+            toast.success('OPT send!');
+        } else {
+            console.error(res);
         }
+    };
+
+    const handleSendCode = useCallback(async () => {
+        const code = generate6DigitCode();
+
+        const templateParams = {
+            to_email: user.email,
+            to_name: user.name ?? user.email,
+            code: code,
+        };
+        emailjs
+            .send(
+                import.meta.env.VITE_EMAIL_SERVICE_ID,
+                import.meta.env.VITE_EMAIL_TEMPLATE_ID,
+                templateParams
+            )
+            .then(
+                () => {
+                    saveOptToServer(code);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.email]);
 
     const handleVerifyCode = useCallback(async () => {

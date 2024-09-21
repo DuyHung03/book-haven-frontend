@@ -20,6 +20,7 @@ import { BookEntity } from '../entity/BookEntity';
 import axiosInstance from '../network/httpRequest';
 import useCartStore from '../store/useCartStore';
 import useUserStore from '../store/useUserStore';
+import usePageTitle from '../util/usePageTitle';
 import { formatNumberWithDots } from '../util/utils';
 const BookDetails = () => {
     const location = useLocation();
@@ -29,6 +30,7 @@ const BookDetails = () => {
 
     const book: BookEntity = location.state;
     const theme = useMantineTheme();
+    usePageTitle(book.title);
 
     //quantity
     const [quantity, setQuantity] = useState(1);
@@ -99,7 +101,7 @@ const BookDetails = () => {
                             <Slide canSwipe={false} autoplay={false} indicators>
                                 {book.imgUrls.map((url, index) => (
                                     <div key={index}>
-                                        <img src={url} alt='img' />
+                                        <img src={url} alt='img' style={{ height: '470px' }} />
                                     </div>
                                 ))}
                             </Slide>

@@ -211,8 +211,10 @@ const Address = () => {
                             value: province.ProvinceID.toString(),
                             label: province.NameExtension[1],
                         }))}
+                        searchable
                     />
                     <Select
+                        searchable
                         mt={'sm'}
                         description='District'
                         size='md'
@@ -229,6 +231,7 @@ const Address = () => {
                         description='Ward'
                         size='md'
                         placeholder='Select ward'
+                        searchable
                         value={form.getValues().ward}
                         onChange={(value) => handleWardSelect(value || '')}
                         data={wards.map((ward) => ({

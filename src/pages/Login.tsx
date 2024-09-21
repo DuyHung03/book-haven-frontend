@@ -1,4 +1,3 @@
-// Login.tsx
 import { Button, Center, Flex, Group, Image, Loader, Text, TextInput } from '@mantine/core';
 import { hasLength, isEmail, useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
@@ -44,7 +43,6 @@ const Login = () => {
             };
 
             const res = await axiosInstance.post('auth/login', JSON.stringify(formData));
-            console.log(res);
 
             if (res.data.code === 200) {
                 const user = res.data.result.user;
@@ -74,11 +72,15 @@ const Login = () => {
             }
         } catch (error) {
             console.error('Login failed:', error);
-            form.setFieldError('email', 'Wrong email or password');
-            form.setFieldError('password', 'Wrong email or password');
+            toast.error('Server error !');
         } finally {
             setLoading(false);
         }
+    };
+
+    const googleLogin = () => {
+        window.location.href =
+            'https://book-haven-api.onrender.com/api/v1/oauth2/authorization/google';
     };
 
     return (
@@ -146,6 +148,7 @@ const Login = () => {
                     </Group>
 
                     <Button
+                        onClick={googleLogin}
                         h={36}
                         leftSection={<Image src={gg_logo} alt='' w={24} />}
                         variant='outline'
